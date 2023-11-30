@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+    jupyterhub_hub:
+        build: jupyterhub
+        container_name: jupyterhub_hub
+        hostname: jupyterhub_hub
+        networks:
+            - jupyterhub_network
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        environment:
+            - MYSQL_ROOT_PASSWORD
+            - MYSQL_DATABASE
+            - CONFIGPROXY_AUTH_TOKEN
+            - DOCKER_NETWORK_NAME
+        command: sh -c 'sleep 15 && jupyterhub'
+
+    jupyterhub_db:
+        image: mysql:8.0
+        container_name: jupyterhub_db
+        hostname: jupyterhub_db
+        networks:
+            - jupyterhub_network
+        environment:
+            - MYSQL_ROOT_PASSWORD
+            - MYSQL_DATABASE
+
+    jupyterhub_proxy:
+        build: configurable-http-proxy
+        container_name: jupyterhub_proxy
+        hostname: jupyterhub_proxy
+        networks:
+            - jupyterhub_network
+        ports:
+            - "8000:8000"
+        environment:
+            - CONFIGPROXY_AUTH_TOKEN
+
+networks:
+    jupyterhub_network:
+        name: jupyterhub_network
+        # allows using an existing network stack not defined by this docker-compose file.
+        # external: true
