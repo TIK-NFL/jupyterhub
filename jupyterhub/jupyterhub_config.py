@@ -26,6 +26,7 @@ c.JupyterHub.cleanup_servers = True
 
 # Debugging
 c.Application.log_level = 'DEBUG'
+c.Application.debug = True
 c.JupyterHub.log_level = 'DEBUG'
 
 
