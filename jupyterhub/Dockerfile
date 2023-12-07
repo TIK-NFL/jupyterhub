@@ -1,4 +1,4 @@
-FROM jupyterhub/jupyterhub:4.0.2
+FROM jupyterhub/jupyterhub:main
 
 RUN apt-get update && \
     apt-get -y install jupyter ssl-cert vim wget unzip jq
