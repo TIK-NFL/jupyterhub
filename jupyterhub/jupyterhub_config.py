@@ -67,6 +67,8 @@ c.Spawner.mem_limit = '4G'
 # Authenticator
 #
 
+c.Authenticator.admin_users = {'admin'}
+
 class RejectAuthenticator(Authenticator):
     async def authenticate(self, handler, data):
         return data['username']  # TODO Disable non-token based authentication.
