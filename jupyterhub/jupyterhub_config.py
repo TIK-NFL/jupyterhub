@@ -11,6 +11,7 @@ c = get_config()
 # Binding
 c.JupyterHub.hub_ip = ''
 c.JupyterHub.base_url = '/jupyter'  # proxy route entry to jupyterhub
+#c.JupyterHub.bind_url = 'https://jupyterhub_proxy:8000/jupyter'
 
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 
@@ -58,7 +59,7 @@ c.DockerSpawner.remove = False
 c.DockerSpawner.debug = True
 c.Spawner.debug = True
 
-c.Spawner.default_url = '/lab'
+c.Spawner.default_url = '/lab'  # '/notebooks' for classic view or '/lab' for JupyterLab view
 c.Spawner.mem_limit = '4G'
 
 
