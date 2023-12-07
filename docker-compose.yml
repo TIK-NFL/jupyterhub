@@ -14,6 +14,8 @@ services:
             - MYSQL_DATABASE
             - CONFIGPROXY_AUTH_TOKEN
             - DOCKER_NETWORK_NAME
+            - DOCKER_NOTEBOOK_IMAGE
+            - JPY_COOKIE_SECRET
         command: sh -c 'sleep 15 && jupyterhub'
 
     jupyterhub_db:
