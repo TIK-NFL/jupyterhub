@@ -17,6 +17,9 @@ services:
             - DOCKER_NOTEBOOK_IMAGE
             - JPY_COOKIE_SECRET
         command: sh -c 'sleep 15 && jupyterhub'
+        depends_on:
+            - jupyterhub_db
+            - jupyterhub_proxy
 
     jupyterhub_db:
         image: mysql:8.0
