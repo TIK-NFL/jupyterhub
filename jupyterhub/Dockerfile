@@ -8,5 +8,7 @@ RUN python3 -m pip install --no-cache-dir \
     mysql-connector-python \
     jupyterhub-idle-culler
 
+RUN jupyter nbextension enable --py widgetsnbextension
+
 COPY jupyterhub_config.py .
 COPY proxy.py /usr/local/lib/python3.10/dist-packages/jupyterhub/proxy.py
