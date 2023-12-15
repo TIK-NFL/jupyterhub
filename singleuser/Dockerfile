@@ -6,8 +6,8 @@ FROM quay.io/jupyterhub/singleuser:main
 #
 
 USER 0
-RUN apt update; \
-    apt install -y vim curl wget jq
+RUN apt-get update; \
+    apt-get install -y vim curl wget jq
 
 USER 1000
 RUN pip install --upgrade ipywidgets matplotlib numpy scipy scikit-learn
@@ -51,6 +51,20 @@ RUN MAMBAFORGE_RELEASE="23.3.1-1"; \
 
 RUN mamba create -n cling; \
     mamba install -y xeus-cling -c conda-forge
+
+# ---------------------------------------------------- Java kernel -----------------------------------------------------
+RUN apt-get install -y openjdk-18-jdk openjdk-18-jre-headless openjdk-18-source
+
+RUN IJAVA_RELEASE="1.3.0"; \
+    IJAVA_ARCHIVE_URL="https://github.com/SpencerPark/IJava/releases/download/v${IJAVA_RELEASE}/ijava-${IJAVA_RELEASE}.zip"; \
+    IJAVA_TMP_DIR="/tmp/ijava"; \
+    mkdir -p ${IJAVA_TMP_DIR}; \
+    curl -L ${IJAVA_ARCHIVE_URL} -o ${IJAVA_TMP_DIR}/archive.zip; \
+    unzip -d ${IJAVA_TMP_DIR} ${IJAVA_TMP_DIR}/archive.zip; \
+    python ${IJAVA_TMP_DIR}/install.py --sys-prefix; \
+    rm -rf ${IJAVA_TMP_DIR}
+
+COPY res/java-logo-svg.svg /opt/conda/share/jupyter/kernels/java/logo-svg.svg
 
 # ----------------------------------------------------------------------------------------------------------------------
 
