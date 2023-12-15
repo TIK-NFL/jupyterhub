@@ -27,9 +27,13 @@ RUN pip install bash_kernel; \
 RUN apt-get -y install octave; \
     pip install octave_kernel
 
+COPY res/octave-logo-svg.svg /opt/conda/share/jupyter/kernels/octave/logo-svg.svg
+
 # ----------------------------------------------------- C kernel -------------------------------------------------------
 RUN pip install jupyter-c-kernel; \
     install_c_kernel --sys-prefix
+
+COPY res/c-logo-svg.svg /opt/conda/share/jupyter/kernels/c/logo-svg.svg
 
 # ----------------------------------------------------- R kernel -------------------------------------------------------
 USER 0
