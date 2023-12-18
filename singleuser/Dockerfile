@@ -62,8 +62,10 @@ RUN mamba create -n cling; \
     mamba install -y xeus-cling -c conda-forge
 
 # ---------------------------------------------------- Java kernel -----------------------------------------------------
+USER 0
 RUN apt-get install -y openjdk-18-jdk openjdk-18-jre-headless openjdk-18-source
 
+USER 1000
 RUN IJAVA_RELEASE="1.3.0"; \
     IJAVA_ARCHIVE_URL="https://github.com/SpencerPark/IJava/releases/download/v${IJAVA_RELEASE}/ijava-${IJAVA_RELEASE}.zip"; \
     IJAVA_TMP_DIR="/tmp/ijava"; \
