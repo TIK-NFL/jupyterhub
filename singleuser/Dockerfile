@@ -59,6 +59,9 @@ RUN MAMBAFORGE_RELEASE="23.3.1-1"; \
 
 RUN mamba install -y xeus-cling -c conda-forge
 
+# only retain xcpp17
+RUN jupyter-kernelspec uninstall -y xcpp11 xcpp14
+
 # ---------------------------------------------------- Java kernel -----------------------------------------------------
 USER 0
 RUN apt-get install -y openjdk-18-jdk openjdk-18-jre-headless openjdk-18-source
