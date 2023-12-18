@@ -14,8 +14,8 @@ USER 1000
 # Jupyter extensions
 #
 
-RUN pip install --upgrade ipywidgets matplotlib numpy scipy scikit-learn nbconvert
-
+RUN pip install --upgrade ipywidgets matplotlib numpy scipy scikit-learn nbconvert playwright
+RUN playwright install chromium
 
 # ======================================================================================================================
 # Jupyter kernels
