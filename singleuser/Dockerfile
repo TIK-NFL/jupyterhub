@@ -48,7 +48,6 @@ USER 1000
 RUN R -e 'IRkernel::installspec()'
 
 # ------------------------------------------------- Xeus-Clang kernel --------------------------------------------------
-USER 0
 ENV PATH="${PATH}:/opt/mambaforge/bin"
 
 RUN MAMBAFORGE_RELEASE="23.3.1-1"; \
@@ -58,8 +57,7 @@ RUN MAMBAFORGE_RELEASE="23.3.1-1"; \
     bash ${INSTALL_SCRIPT} -p /opt/mambaforge -b; \
     rm ${INSTALL_SCRIPT}
 
-RUN mamba create -n cling; \
-    mamba install -y xeus-cling -c conda-forge
+RUN mamba install -y xeus-cling -c conda-forge
 
 # ---------------------------------------------------- Java kernel -----------------------------------------------------
 USER 0
