@@ -14,8 +14,8 @@ USER 1000
 # Jupyter extensions
 #
 
-RUN pip install --upgrade ipywidgets matplotlib numpy scipy scikit-learn nbconvert playwright
-RUN playwright install chromium
+RUN pip install --upgrade ipywidgets matplotlib numpy scipy scikit-learn nbconvert playwright; \
+    playwright install chromium
 
 # ======================================================================================================================
 # Jupyter kernels
@@ -57,10 +57,8 @@ RUN MAMBAFORGE_RELEASE="23.3.1-1"; \
     bash ${INSTALL_SCRIPT} -p /opt/mambaforge -b; \
     rm ${INSTALL_SCRIPT}
 
-RUN mamba install -y xeus-cling -c conda-forge
-
-# only retain xcpp17
-RUN jupyter-kernelspec uninstall -y xcpp11 xcpp14
+RUN mamba install -y xeus-cling -c conda-forge; \
+    jupyter-kernelspec uninstall -y xcpp11 xcpp14  # only retain xcpp17
 
 # ---------------------------------------------------- Java kernel -----------------------------------------------------
 USER 0
