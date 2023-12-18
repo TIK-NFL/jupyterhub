@@ -7,25 +7,30 @@ FROM quay.io/jupyterhub/singleuser:main
 
 USER 0
 RUN apt-get update; \
-    apt-get install -y vim curl wget jq
-
+    apt-get install -y vim curl wget jq pandoc texlive-xetex texlive-fonts-recommended texlive-plain-generic
 USER 1000
-RUN pip install --upgrade ipywidgets matplotlib numpy scipy scikit-learn
+
+# ======================================================================================================================
+# Jupyter extensions
+#
+
+RUN pip install --upgrade ipywidgets matplotlib numpy scipy scikit-learn nbconvert
 
 
 # ======================================================================================================================
 # Jupyter kernels
 #
 
-USER 1000
-
 # ---------------------------------------------------- BASH kernel -----------------------------------------------------
 RUN pip install bash_kernel; \
     python -m bash_kernel.install
 
 # --------------------------------------------------- Octave kernel ----------------------------------------------------
-RUN apt-get -y install octave; \
-    pip install octave_kernel
+USER 0
+RUN apt-get -y install octave
+
+USER 1000
+RUN pip install octave_kernel
 
 COPY res/octave-logo-svg.svg /opt/conda/share/jupyter/kernels/octave/logo-svg.svg
 
