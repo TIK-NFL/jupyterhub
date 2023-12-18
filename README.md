@@ -1,5 +1,19 @@
 # Jupyterhub-Cloud
 
+This reference configuration provides a cloud-based Jupyterhub deployment for integrated usage (e.g., within plugins or frames).
+It supports only short-lived sessions which are managed by the DockerSpawner.
+A login is only possible by acquiring an authentication token via Jupyterhub API and passing the token either via URL or cookie in future requests.
+Jupyterhub is also configured to run within the same Docker network the spawned sessions containers (single user servers) will also run on.
+Thus, sufficient number of unbound local IP addresses should be reserved within your Docker network.
+
+This project configuration sets up the following services:
+- Jupyterhub
+- DB (MySQL)
+- Proxy (configurable-http-proxy)
+
+**WARNING**: All jupyterhub sessions/users are short-lived and will be culled upon expiration which also results in deleting all data created during a session.
+Thus, the integrator might want to save all data by requesting it from the REST API server and moving the data to some external resource storage.
+
 ## Build and Deployment
 
 ## Integration
