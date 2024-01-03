@@ -7,22 +7,61 @@ Jupyterhub is also configured to run within the same Docker network the spawned 
 Thus, sufficient number of unbound local IP addresses should be reserved within your Docker network.
 
 This project configuration sets up the following services:
-- Jupyterhub
-- DB (MySQL)
-- Proxy (configurable-http-proxy)
+
+| Service                 | Docker hostname    | External port    |
+|-------------------------|--------------------|------------------|
+| JupyterHub              | `jupyterhub_hub`   | 8081             |
+| Configurable HTTP proxy | `jupyterhub_proxy` | 8000, 8001 (API) |
+| MySQL                   | `jupyterhub_db`    | 3306, 33060      |
+
 
 **WARNING**: All jupyterhub sessions/users are short-lived and will be culled upon expiration which also results in deleting all data created during a session.
 Thus, the integrator might want to save all data by requesting it from the REST API server and moving the data to some external resource storage.
 
 ## Build and Deployment
 
-## Integration
+1. Clone Jupyterhub-Cloud and enter the base directory of the project.
+2. Generate an `.env` file containing definitions of environment variables which are passed to the services we want to build.
+    ```
+    cat << EOF > .env
+    MYSQL_DATABASE=jupyterhub
+    MYSQL_ROOT_PASSWORD=$(openssl rand -hex 32)
+    DOCKER_NETWORK_NAME=jupyterhub_network
+    DOCKER_NOTEBOOK_IMAGE=quay.io/jupyterhub/singleuser:main
+    CONFIGPROXY_AUTH_TOKEN=$(openssl rand -hex 32)
+    JPY_COOKIE_SECRET=$(openssl rand -hex 64)
+    EOF
+    ```
+   Note that the `openssl rand` commands will generate some secrets such as service tokens and passwords.
+3. If you want to use the single user image provided by this project, build the image using
+   ```
+   docker build -t jupyterhub-cloud-singleuser:main singleuser/
+   ```
+   and change the `DOCKER_NOTEBOOK_IMAGE` variable to `jupyterhub-cloud-singleuser:main` within the `.env` file.  Note that you might also use another single user server images which deviate from these two options.
+4. Build and start all services:
+   ```
+   docker compose up --build
+   ```
+
+
+## Development
+
+- Debugging
+- Cert validation
+- Attaching to the jupyterhub_network
+
+## Plugin
+
+- Proxying to jupyterhub / Avoiding CROSS-origin problems 
+
+## Single user server
 
 ## Configuration
 
+
 ### Configurable-http-proxy (default arguments)
 ```
---ip=127.0.0.1 --port=8080 --api-ip=127.0.0.1 --api-port=8001 --default-target=http://jupyterhub_hub:8081 --error-target=http://jupyterhub_hub:8081/hub/error
+--ip=127.0.0.1 --port=8000 --api-ip=127.0.0.1 --api-port=8001 --default-target=http://jupyterhub_hub:8081 --error-target=http://jupyterhub_hub:8081/hub/error
 ```
 
 ### Apache (minimal config)
