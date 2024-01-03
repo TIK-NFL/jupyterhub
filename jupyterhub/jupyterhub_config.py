@@ -88,8 +88,7 @@ c.JupyterHub.authenticator_class = RejectAuthenticator
 
 c.JupyterHub.services = [
     {
-        'name': 'service-admin',
-        'admin': True
+        'name': 'service-admin'
     },
     {
         "name": "jupyterhub-idle-culler-service",
