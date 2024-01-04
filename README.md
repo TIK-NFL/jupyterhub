@@ -18,7 +18,8 @@ This project configuration sets up the following services:
 **WARNING**: All jupyterhub sessions/users are short-lived and will be culled upon expiration which also results in deleting all data created during a session.
 Thus, the integrator might want to save all data by requesting it from the REST API server and moving the data to some external resource storage.
 
-## Build and Deployment
+
+## Build and Run using docker-compose
 
 1. Clone Jupyterhub-Cloud and enter the base directory of the project.
 2. Generate an `.env` file containing definitions of environment variables which are passed to the services we want to build.
@@ -43,28 +44,56 @@ Thus, the integrator might want to save all data by requesting it from the REST 
    docker compose up --build
    ```
 
+---
 
 ## Development
 
-- Debugging
-- Cert validation
-- Attaching to the jupyterhub_network
+### Debugging
 
-## Plugin
-
-- Proxying to jupyterhub / Avoiding CROSS-origin problems 
-
-## Single user server
-
-## Configuration
-
-
-### Configurable-http-proxy (default arguments)
+To enable debug logging for all Jupyterhub related services, add the following lines to `jupyterhub/jupyterhub_config.py`:
 ```
---ip=127.0.0.1 --port=8000 --api-ip=127.0.0.1 --api-port=8001 --default-target=http://jupyterhub_hub:8081 --error-target=http://jupyterhub_hub:8081/hub/error
+c.ConfigurableHTTPProxy.debug = True
+c.ConfigurableHTTPProxy.log_level = 'DEBUG'
+c.JupyterHub.log_level = 'DEBUG'
+c.Spawner.debug = True
+c.DockerSpawner.debug = True
+c.Application.log_level = 'DEBUG'
 ```
 
-### Apache (minimal config)
+### Attaching to the Jupyterhub network
+
+If you are using other docker compose services which integrate this Jupyterhub-Cloud in another network, you might attach them to the jupyterhub docker network defined in this project.
+In this case, define the network used by integrating services as external (see below). Then you will be able to resolve names and contact Jupyter services like `jupyterhub_proxy`.
+
+```
+networks:
+    another_network:
+        name: jupyterhub_network
+        # allows using an existing network stack not defined by this docker-compose file.
+        external: true
+```
+
+### SSL certificate validation
+
+SSL is enabled at the public facing interface of the Jupyterhub proxy.
+On each docker build a new private key and certificate is generated at the configurable HTTP proxy.
+Since the certificate is self-signed, Jupyterhub's requests to the proxy will fail by default.
+To circumvent this for development reasons, you might add the `validate_cert=False` parameter to the `HTTPRequest` call within the `api_request` function in `/usr/local/lib/python3.10/dist-packages/jupyterhub/proxy.py`.
+
+Alternatively, you can use the original configurable-http-proxy image , which by default does not use SSL.
+To this end, specify `image: jupyterhub/configurable-http-proxy` instead of `build: configurable-http-proxy` and change
+the protocol of `c.ConfigurableHTTPProxy.api_url` from `https` to `http` within `jupyterhub/jupyterhub_config.py`.
+If you are using ProxyPass rules to the jupyterhub, you will also need to update the protocol of the target to `http`/`ws`. 
+
+---
+
+## Integrated usage
+
+This configuration enables the Jupyterhub to be used in an integrated manner, e.g., embedded via iframe, while other backend services are communicating with the Jupyterhub REST API and single user server endpoints.
+Being embedded, Jupyter frontend needs to send requests to Jupyterhub URLs which might not match with the origin resulting in conflicts with the CORS policies.
+As a solution, the webserver that embeds Jupyter must be configured with ProxyPass rules, which route requests to correct Jupyterhub URL.
+
+The following reference configuration of an Apache webserver contains reverse proxy rules, which affect HTTPS as well as secure websocket connections (WSS).
 
 ```
 <VirtualHost _default_:443>
@@ -103,6 +132,32 @@ Thus, the integrator might want to save all data by requesting it from the REST 
     </Location>
 
 </VirtualHost>
+```
+
+All requests sent to `/jupyter` will be rerouted to `jupyterhub_proxy:8000/jupyter`.
+
+
+## Single User Server
+
+The single user server image configured by Jupyterhub-Cloud ships with the following kernels:
+
+| Language | Lang. version            | Jupyter kernel          |
+|----------|--------------------------|-------------------------|
+| Python   | 3                        | `ipykernel`             |
+| BASH     | GNU bash, version 5.1.16 | `bash_kernel`           |
+| C        | C11                      | `jupyter-c-kernel`      |
+| C++      | 17                       | `xeus-cling` (`xcpp17`) |
+| Java     | OpenJDK 18               | `ijava`                 |
+| Octave   | GNU Octave 6.4.0         | `octave_kernel`         |
+| R        | 4.1.2                    | `IRkernel`              |
+
+
+## Configuration
+
+
+### Configurable-http-proxy (default arguments)
+```
+--ip=127.0.0.1 --port=8000 --api-ip=127.0.0.1 --api-port=8001 --default-target=http://jupyterhub_hub:8081 --error-target=http://jupyterhub_hub:8081/hub/error
 ```
 
 #### Resources
