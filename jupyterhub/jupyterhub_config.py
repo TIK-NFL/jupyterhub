@@ -75,8 +75,8 @@ c.Authenticator.admin_users = {'admin'}
 
 class RejectAuthenticator(Authenticator):
     async def authenticate(self, handler, data):
-        # TODO Disable non-token based authentication.
-        return data['username']
+        # Disable non-token based authentication.
+        return None
 
 
 c.JupyterHub.authenticator_class = RejectAuthenticator
