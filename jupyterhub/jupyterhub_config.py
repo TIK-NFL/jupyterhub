@@ -99,7 +99,9 @@ c.JupyterHub.services = [
 ]
 
 # Define additional tokens for existing services.
-c.JupyterHub.service_tokens = {'secret-token': 'service-admin'}
+c.JupyterHub.service_tokens = {
+    os.environ.get('JPY_SERVICE_ADMIN_TOKEN'): 'service-admin'
+}
 
 c.JupyterHub.load_roles = [
     {
