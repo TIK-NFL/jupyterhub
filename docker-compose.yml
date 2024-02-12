@@ -17,10 +17,10 @@ services:
             - DOCKER_NOTEBOOK_IMAGE
             - JPY_SERVICE_ADMIN_TOKEN
             - JPY_COOKIE_SECRET
-        command: sh -c 'sleep 15 && jupyterhub'
         depends_on:
             - jupyterhub_db
             - jupyterhub_proxy
+        restart: unless-stopped
 
     jupyterhub_db:
         image: mysql:8.0
@@ -31,6 +31,7 @@ services:
         environment:
             - MYSQL_ROOT_PASSWORD
             - MYSQL_DATABASE
+        restart: unless-stopped
 
     jupyterhub_proxy:
         build: configurable-http-proxy
@@ -42,6 +43,7 @@ services:
             - "8000:8000"
         environment:
             - CONFIGPROXY_AUTH_TOKEN
+        restart: unless-stopped
 
 networks:
     jupyterhub_network:
