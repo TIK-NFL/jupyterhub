@@ -45,8 +45,6 @@ Thus, the integrator might want to save all data by requesting it from the REST 
    docker compose up --build
    ```
 
----
-
 ## Development
 
 ### Debugging
@@ -85,8 +83,6 @@ Alternatively, you can use the original configurable-http-proxy image , which by
 To this end, specify `image: jupyterhub/configurable-http-proxy` instead of `build: configurable-http-proxy` and change
 the protocol of `c.ConfigurableHTTPProxy.api_url` from `https` to `http` within `jupyterhub/jupyterhub_config.py`.
 If you are using ProxyPass rules to the jupyterhub, you will also need to update the protocol of the target to `http`/`ws`. 
-
----
 
 ## Integrated usage
 
@@ -142,25 +138,17 @@ All requests sent to `/jupyter` will be rerouted to `jupyterhub_proxy:8000/jupyt
 
 The single user server image configured by Jupyterhub-Cloud ships with the following kernels:
 
-| Language | Lang. version            | Jupyter kernel          |
-|----------|--------------------------|-------------------------|
-| Python   | 3                        | `ipykernel`             |
-| BASH     | GNU bash, version 5.1.16 | `bash_kernel`           |
-| C        | C11                      | `jupyter-c-kernel`      |
-| C++      | 17                       | `xeus-cling` (`xcpp17`) |
-| Java     | OpenJDK 18               | `ijava`                 |
-| Octave   | GNU Octave 6.4.0         | `octave_kernel`         |
-| R        | 4.1.2                    | `IRkernel`              |
+| Language | Lang. version            | Jupyter kernel            | Reference                                                                                                           |
+|----------|--------------------------|---------------------------|---------------------------------------------------------------------------------------------------------------------|
+| Python   | 3                        | `ipykernel`               | [Repository](https://github.com/ipython/ipykernel) / [Homepage](https://ipython.org)                                |
+| BASH     | GNU bash, version 5.1.16 | `bash_kernel`             | [Repository](https://github.com/takluyver/bash_kernel)                                                              |
+| C        | C11                      | `jupyter-c-kernel`        | [Repository](https://github.com/brendan-rius/jupyter-c-kernel)                                                      |
+| C++      | 17                       | `xeus-cling` / `xcpp17`   | [Repository](https://github.com/jupyter-xeus/xeus-cling) / [Homepage](https://xeus-cling.readthedocs.io/en/latest/) |
+| Java     | OpenJDK 18               | `ijava`                   | [Repository](https://github.com/SpencerPark/IJava)                                                                  |
+| Octave   | GNU Octave 6.4.0         | `octave_kernel`           | [Repository](https://github.com/Calysto/octave_kernel)                                                              |
+| R        | 4.1.2                    | `IRkernel`                | [Repository](https://github.com/IRkernel/IRkernel) / [Homepage](https://irkernel.github.io)                         |
 
 
-## Configuration
-
-
-### Configurable-http-proxy (default arguments)
-```
---ip=127.0.0.1 --port=8000 --api-ip=127.0.0.1 --api-port=8001 --default-target=http://jupyterhub_hub:8081 --error-target=http://jupyterhub_hub:8081/hub/error
-```
-
-#### Resources
+## Resources
 - https://jupyterhub.readthedocs.io/en/stable/howto/separate-proxy.html
 - https://github.com/jupyterhub/configurable-http-proxy
