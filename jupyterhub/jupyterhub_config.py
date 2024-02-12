@@ -21,16 +21,16 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 c.ConfigurableHTTPProxy.api_url = 'https://jupyterhub_proxy:8001'
 c.ConfigurableHTTPProxy.auth_token = os.environ.get('CONFIGPROXY_AUTH_TOKEN')
 c.ConfigurableHTTPProxy.should_start = False
-c.ConfigurableHTTPProxy.debug = True
-c.ConfigurableHTTPProxy.log_level = 'DEBUG'
+# c.ConfigurableHTTPProxy.debug = True
+# c.ConfigurableHTTPProxy.log_level = 'DEBUG'
 
 # Cleanups
 # do not stop/remove any running servers when jupyterhub shuts down or restarts
 c.JupyterHub.cleanup_servers = False
 
 # Debugging
-c.Application.log_level = 'DEBUG'
-c.JupyterHub.log_level = 'DEBUG'
+# c.Application.log_level = 'DEBUG'
+# c.JupyterHub.log_level = 'DEBUG'
 
 
 # ======================================================================================================================
@@ -60,8 +60,8 @@ c.DockerSpawner.name_template = 'jupyter_{raw_username}'
 c.DockerSpawner.remove = True
 
 # Debugging. Single-user server debug logging.
-c.DockerSpawner.debug = True
-c.Spawner.debug = True
+# c.DockerSpawner.debug = True
+# c.Spawner.debug = True
 
 c.Spawner.default_url = '/lab'  # '/notebooks' for classic view or '/lab' for JupyterLab view
 c.Spawner.mem_limit = '4G'
