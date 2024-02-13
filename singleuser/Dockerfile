@@ -76,7 +76,14 @@ RUN IJAVA_RELEASE="1.3.0"; \
 
 COPY res/java-logo-svg.svg /opt/conda/share/jupyter/kernels/java/logo-svg.svg
 
-# ----------------------------------------------------------------------------------------------------------------------
+# ======================================================================================================================
+# Customizations
+#
+
+# --------------------------------------------------- jpyintegext ------------------------------------------------------
+USER 0
+COPY res/jpyintegext-1.0.0.tar.gz .
+RUN pip install --user jpyintegext-1.0.0.tar.gz
 
 
 # Switch to the standard jupyter user 'jovyan'
