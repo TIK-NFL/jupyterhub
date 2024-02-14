@@ -26,4 +26,4 @@ RUN jupyter nbextension enable --py widgetsnbextension
 #
 
 COPY jupyterhub_config.py .
-COPY proxy.py /usr/local/lib/python3.10/dist-packages/jupyterhub/proxy.py
+COPY --from=configurable-http-proxy /etc/ssl/certs/jupyterhub_proxy.crt /etc/ssl/certs
