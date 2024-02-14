@@ -1,4 +1,4 @@
-FROM jupyterhub/configurable-http-proxy:4.6.1
+FROM jupyterhub/configurable-http-proxy:4
 
 USER 0
 
