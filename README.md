@@ -1,4 +1,4 @@
-# Jupyterhub-Cloud
+# Integrable Jupyterhub
 
 This reference configuration provides a cloud-based Jupyterhub deployment for integrated usage (e.g., within plugins or frames).
 It supports only short-lived sessions which are managed by the DockerSpawner.
@@ -21,7 +21,7 @@ Thus, the integrator might want to save all data by requesting it from the REST 
 
 ## Build and Run using docker-compose
 
-1. Clone Jupyterhub-Cloud and enter the base directory of the project.
+1. Clone Integrable Jupyterhub and enter the base directory of the project.
 2. Generate an `.env` file containing definitions of environment variables which are passed to the services we want to build.
     ```
     cat << EOF > .env
@@ -37,9 +37,9 @@ Thus, the integrator might want to save all data by requesting it from the REST 
    Note that the `openssl rand` commands will generate some secrets such as service tokens and passwords.
 3. If you want to use the single user image provided by this project, build the image using
    ```
-   docker build -t jupyterhub-cloud-singleuser:main singleuser/
+   docker build -t integrable-jupyterhub-singleuser:main singleuser/
    ```
-   and change the `DOCKER_NOTEBOOK_IMAGE` variable to `jupyterhub-cloud-singleuser:main` within the `.env` file.  Note that you might also use another single user server images which deviate from these two options.
+   and change the `DOCKER_NOTEBOOK_IMAGE` variable to `integrable-jupyterhub-singleuser:main` within the `.env` file.  Note that you might also use another single user server images which deviate from these two options.
 4. Build and start all services:
    ```
    docker compose up --build
@@ -61,7 +61,7 @@ c.Application.log_level = 'DEBUG'
 
 ### Attaching to the Jupyterhub network
 
-If you are using other docker compose services which integrate this Jupyterhub-Cloud in another network, you might attach them to the jupyterhub docker network defined in this project.
+If you are using other docker compose services which integrate this Jupyterhub in another network, you might attach them to the jupyterhub docker network defined in this project.
 In this case, define the network used by integrating services as external (see below). Then you will be able to resolve names and contact Jupyter services like `jupyterhub_proxy`.
 
 ```
@@ -136,7 +136,7 @@ All requests sent to `/jupyter` will be rerouted to `jupyterhub_proxy:8000/jupyt
 
 ## Single User Server
 
-The single user server image configured by Jupyterhub-Cloud ships with the following kernels:
+The single user server image configured by Integrable Jupyterhub ships with the following kernels:
 
 | Language | Lang. version            | Jupyter kernel            | Reference                                                                                                           |
 |----------|--------------------------|---------------------------|---------------------------------------------------------------------------------------------------------------------|
