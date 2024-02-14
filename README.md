@@ -77,7 +77,7 @@ networks:
 SSL is enabled at the public facing interface of the Jupyterhub proxy.
 On each docker build a new private key and certificate is generated at the configurable HTTP proxy.
 Since the certificate is self-signed, Jupyterhub's requests to the proxy will fail by default.
-To circumvent this for development reasons, you might add the `validate_cert=False` parameter to the `HTTPRequest` call within the `api_request` function in `/usr/local/lib/python3.10/dist-packages/jupyterhub/proxy.py`.
+To circumvent this for development reasons, the generated SSL certificate from the configurable-http-proxy image is copied to the Jupyterhub image.
 
 Alternatively, you can use the original configurable-http-proxy image , which by default does not use SSL.
 To this end, specify `image: jupyterhub/configurable-http-proxy` instead of `build: configurable-http-proxy` and change
