@@ -28,7 +28,7 @@ Thus, the integrator might want to save all data by requesting it from the REST 
     MYSQL_DATABASE=jupyterhub
     MYSQL_ROOT_PASSWORD=$(openssl rand -hex 32)
     DOCKER_NETWORK_NAME=jupyterhub_network
-    DOCKER_NOTEBOOK_IMAGE=quay.io/jupyterhub/singleuser:main
+    DOCKER_NOTEBOOK_IMAGE=quay.io/jupyter/base-notebook:hub-4.0.2
     CONFIGPROXY_AUTH_TOKEN=$(openssl rand -hex 32)
     JPY_COOKIE_SECRET=$(openssl rand -hex 64)
     JPY_SERVICE_ADMIN_TOKEN=$(openssl rand -hex 64)
@@ -37,9 +37,9 @@ Thus, the integrator might want to save all data by requesting it from the REST 
    Note that the `openssl rand` commands will generate some secrets such as service tokens and passwords.
 3. If you want to use the single user image provided by this project, build the image using
    ```
-   docker build -t integrable-jupyterhub-singleuser:main singleuser/
+   docker build -t integrable-jupyterhub-notebook:main notebook/
    ```
-   and change the `DOCKER_NOTEBOOK_IMAGE` variable to `integrable-jupyterhub-singleuser:main` within the `.env` file.  Note that you might also use another single user server images which deviate from these two options.
+   and change the `DOCKER_NOTEBOOK_IMAGE` variable to `integrable-jupyterhub-notebook:main` within the `.env` file.  Note that you might also use another single user server images which deviate from these two options.
 4. Build and start all services:
    ```
    docker compose up --build
