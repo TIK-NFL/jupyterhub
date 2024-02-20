@@ -1,9 +1,14 @@
-FROM quay.io/jupyterhub/singleuser:main
+FROM quay.io/jupyter/base-notebook:hub-4.0.2
 
 
 # ======================================================================================================================
 # General packages and jupyterhub dependencies
 #
+
+ARG JUPYTERHUB_VERSION=135be724
+
+RUN pip install --no-cache --upgrade --upgrade-strategy only-if-needed \
+    https://github.com/jupyterhub/jupyterhub/archive/${JUPYTERHUB_VERSION}.tar.gz
 
 USER 0
 RUN apt-get update; \

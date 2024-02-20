@@ -1,4 +1,4 @@
-FROM jupyterhub/configurable-http-proxy:4.6.1
+FROM quay.io/jupyterhub/configurable-http-proxy:4.6.1
 
 USER 0
 
