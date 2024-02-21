@@ -5,6 +5,9 @@ FROM quay.io/jupyter/base-notebook:hub-4.0.2
 # General packages and jupyterhub dependencies
 #
 
+# Use the jupyterhub current revision 135be724 succseeding a bugfix 3b2af296 which is essential for the integration.
+# As there are no published releases/tags since then, the current revision from the main branch is used.
+# TODO: Use a newer release tag (^4.0.2) as soon as it is available.
 ARG JUPYTERHUB_VERSION=135be724
 
 RUN pip install --no-cache --upgrade --upgrade-strategy only-if-needed \
