@@ -98,10 +98,16 @@ c.JupyterHub.services = [
     }
 ]
 
+
+# Get service admin users and tokens from env variable.
+service_admins_env = os.environ.get('JPY_SERVICE_ADMINS')
+service_admins = [(sa.split(':')[0], sa.split(':')[1]) for sa in service_admins_env.split(';')]
+
 # Define additional tokens for existing services.
-c.JupyterHub.service_tokens = {
-    os.environ.get('JPY_SERVICE_ADMIN_TOKEN'): 'service-admin'
-}
+c.JupyterHub.service_tokens = {}
+
+for service_admin in service_admins:
+    c.JupyterHub.service_tokens[service_admin[1]] = service_admin[0]
 
 c.JupyterHub.load_roles = [
     {
@@ -115,9 +121,7 @@ c.JupyterHub.load_roles = [
             'servers',
             'tokens'
         ],
-        'services': [
-            'service-admin',
-        ]
+        'services': [service_admin[0] for service_admin in service_admins]
     },
     {
         "name": "jupyterhub-idle-culler-role",

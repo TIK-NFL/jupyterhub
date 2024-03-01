@@ -15,7 +15,7 @@ services:
             - CONFIGPROXY_AUTH_TOKEN
             - DOCKER_NETWORK_NAME
             - DOCKER_NOTEBOOK_IMAGE
-            - JPY_SERVICE_ADMIN_TOKEN
+            - JPY_SERVICE_ADMINS
             - JPY_COOKIE_SECRET
         depends_on:
             - jupyterhub_db
