@@ -4,7 +4,6 @@ from jupyterhub.auth import Authenticator
 
 c = get_config()
 
-
 # ======================================================================================================================
 # General config
 #
@@ -42,7 +41,6 @@ c.JupyterHub.db_url = 'mysql+mysqlconnector://root:{}@jupyterhub_db:3306/{}'.for
     os.environ['MYSQL_DATABASE']
 )
 
-
 # ======================================================================================================================
 # Spawner config
 #
@@ -66,6 +64,35 @@ c.DockerSpawner.remove = True
 c.Spawner.default_url = '/lab'  # '/notebooks' for classic view or '/lab' for JupyterLab view
 c.Spawner.mem_limit = '4G'
 
+# ======================================================================================================================
+# Access control origins
+#
+
+access_control_origins = ''
+for origin in os.environ.get('ACCESS_CONTROL_ORIGINS').split(';'):
+    access_control_origins += origin + ' '
+
+c.JupyterHub.tornado_settings = {
+    'headers': {
+        'Access-Control-Allow-Origin': access_control_origins,
+    },
+    'cookie_options': {
+        'SameSite': 'None',
+        'Secure': True,
+        'Partitioned': True
+    },
+}
+
+serverapp_tornado_settings = {
+    'headers': {
+        'Content-Security-Policy': "frame-ancestors 'self' " + access_control_origins
+    },
+    'xsrf_cookie_kwargs': {
+        'Partitioned': True
+    }
+}
+
+c.Spawner.args = ["--ServerApp.tornado_settings={}".format(str(serverapp_tornado_settings))]
 
 # ======================================================================================================================
 # Authenticator
@@ -80,7 +107,6 @@ class RejectAuthenticator(Authenticator):
 
 
 c.JupyterHub.authenticator_class = RejectAuthenticator
-
 
 # ======================================================================================================================
 # Services and roles
@@ -97,7 +123,6 @@ c.JupyterHub.services = [
         ]
     }
 ]
-
 
 # Get service admin users and tokens from env variable.
 service_admins_env = os.environ.get('JPY_SERVICE_ADMINS')

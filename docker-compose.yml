@@ -17,6 +17,7 @@ services:
             - DOCKER_NOTEBOOK_IMAGE
             - JPY_SERVICE_ADMINS
             - JPY_COOKIE_SECRET
+            - ACCESS_CONTROL_ORIGINS
         depends_on:
             - jupyterhub_db
             - jupyterhub_proxy

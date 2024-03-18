@@ -32,6 +32,7 @@ Thus, the integrator might want to save all data by requesting it from the REST 
     CONFIGPROXY_AUTH_TOKEN=$(openssl rand -hex 32)
     JPY_COOKIE_SECRET=$(openssl rand -hex 64)
     JPY_SERVICE_ADMINS=service-admin:$(openssl rand -hex 64)
+    ACCESS_CONTROL_ORIGINS= # <origins that are allowed integrate jupyter as a frame>
     EOF
     ```
    Note that the `openssl rand` commands will generate some secrets such as service tokens and passwords.
