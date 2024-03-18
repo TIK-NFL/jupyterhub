@@ -6,7 +6,7 @@ FROM quay.io/jupyterhub/jupyterhub:4.0.2
 #
 
 RUN apt-get update && \
-    apt-get -y install jupyter ssl-cert vim wget unzip jq
+    apt-get -y install jupyter ssl-cert patch vim wget unzip jq
 
 RUN python3 -m pip install --no-cache-dir \
     dockerspawner \
@@ -20,6 +20,13 @@ RUN python3 -m pip install --no-cache-dir \
 
 RUN jupyter nbextension enable --py widgetsnbextension
 
+
+# ======================================================================================================================
+# Patches
+#
+
+COPY patches/cookies.py.patch /tmp/cookies.py.patch
+RUN patch /usr/lib/python3.10/http/cookies.py < /tmp/cookies.py.patch
 
 # ======================================================================================================================
 # Config

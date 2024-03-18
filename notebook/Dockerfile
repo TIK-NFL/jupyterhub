@@ -15,7 +15,7 @@ RUN pip install --no-cache --upgrade --upgrade-strategy only-if-needed \
 
 USER 0
 RUN apt-get update; \
-    apt-get install -y vim curl wget jq pandoc texlive-xetex texlive-fonts-recommended texlive-plain-generic
+    apt-get install -y vim curl wget jq patch pandoc texlive-xetex texlive-fonts-recommended texlive-plain-generic
 USER 1000
 
 # ======================================================================================================================
@@ -83,6 +83,17 @@ RUN IJAVA_RELEASE="1.3.0"; \
     rm -rf ${IJAVA_TMP_DIR}
 
 COPY res/java-logo-svg.svg /opt/conda/share/jupyter/kernels/java/logo-svg.svg
+
+
+# ======================================================================================================================
+# Patches
+#
+
+USER 0
+COPY patches/*.py.patch /tmp/
+RUN patch /opt/conda/lib/python3.11/http/cookies.py < /tmp/cookies.py.patch && \
+    patch /opt/conda/lib/python3.11/site-packages/jupyter_server/serverapp.py < /tmp/serverapp.py.patch
+USER 1000
 
 # ======================================================================================================================
 # Customizations

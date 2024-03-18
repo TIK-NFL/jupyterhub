@@ -1,0 +1,15 @@
+--- serverapp.py	2024-03-04 15:43:44.000000000 +0100
++++ serverapp.mod.py	2024-03-14 16:14:30.761766691 +0100
+@@ -464,9 +464,10 @@
+         # allow custom overrides for the tornado web app.
+         settings.update(settings_overrides)
+ 
+-        if base_url and "xsrf_cookie_kwargs" not in settings:
++        # patch: allow overriding 'xsrf_cookie_kwargs' from settings.
++        if base_url:
+             # default: set xsrf cookie on base_url
+-            settings["xsrf_cookie_kwargs"] = {"path": base_url}
++            settings["xsrf_cookie_kwargs"]["path"] = base_url
+         return settings
+ 
+     def init_handlers(self, default_services, settings):
