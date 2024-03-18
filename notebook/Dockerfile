@@ -99,10 +99,13 @@ USER 1000
 # Customizations
 #
 
+RUN pip uninstall --yes nbclassic
+
 # --------------------------------------------------- jpyintegext ------------------------------------------------------
-USER 1000
-COPY --chown=1000:100 res/jpyintegext-1.0.0.tar.gz .local/share/packages/jpyintegext.tar.gz
-RUN pip install --user .local/share/packages/jpyintegext.tar.gz
+#USER 1000
+#COPY --chown=1000:100 res/jpyintegext-1.0.0.tar.gz .local/share/packages/jpyintegext.tar.gz
+#RUN pip install --user .local/share/packages/jpyintegext.tar.gz
+
 
 # Switch to the standard jupyter user 'jovyan'
 USER 1000
