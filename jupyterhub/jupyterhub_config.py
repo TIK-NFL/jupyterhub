@@ -17,7 +17,7 @@ c.JupyterHub.base_url = '/jupyter'
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 
 # Proxy
-c.ConfigurableHTTPProxy.api_url = 'https://jupyterhub_proxy:8001'
+c.ConfigurableHTTPProxy.api_url = 'http://jupyterhub_proxy:8001'
 c.ConfigurableHTTPProxy.auth_token = os.environ.get('CONFIGPROXY_AUTH_TOKEN')
 c.ConfigurableHTTPProxy.should_start = False
 # c.ConfigurableHTTPProxy.debug = True

@@ -33,4 +33,3 @@ RUN patch /usr/lib/python3.10/http/cookies.py < /tmp/cookies.py.patch
 #
 
 COPY jupyterhub_config.py .
-COPY --from=configurable-http-proxy-ssl /etc/ssl/certs/jupyterhub_proxy.crt /etc/ssl/certs

@@ -35,7 +35,12 @@ services:
         restart: unless-stopped
 
     jupyterhub_proxy:
-        build: configurable-http-proxy
+        build:
+            context: configurable-http-proxy
+            args:
+                - SSL_KEY_FILE=ssl/jupyterhub_proxy.key
+                - SSL_CRT_FILE=ssl/jupyterhub_proxy.crt
+                - SSL_CA_FILE=ssl/jupyterhub_proxy_chain.crt
         container_name: jupyterhub_proxy
         image: configurable-http-proxy-ssl
         hostname: jupyterhub_proxy
