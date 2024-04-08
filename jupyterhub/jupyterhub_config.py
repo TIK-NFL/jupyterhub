@@ -36,9 +36,10 @@ c.JupyterHub.cleanup_servers = False
 # Database
 #
 
-c.JupyterHub.db_url = 'mysql+mysqlconnector://root:{}@jupyterhub_db:3306/{}'.format(
-    os.environ['MYSQL_ROOT_PASSWORD'],
-    os.environ['MYSQL_DATABASE']
+c.JupyterHub.db_url = 'postgresql://{}:{}@jupyterhub_db:5432/{}'.format(
+    os.environ['POSTGRES_USER'],
+    os.environ['POSTGRES_PASSWORD'],
+    os.environ['POSTGRES_DB']
 )
 
 # ======================================================================================================================

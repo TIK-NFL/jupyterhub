@@ -6,11 +6,10 @@ FROM quay.io/jupyterhub/jupyterhub:4.0.2
 #
 
 RUN apt-get update && \
-    apt-get -y install jupyter ssl-cert patch vim wget unzip jq
+    apt-get -y install jupyter ssl-cert patch vim wget unzip jq python3-psycopg2
 
 RUN python3 -m pip install --no-cache-dir \
     dockerspawner \
-    mysql-connector-python \
     jupyterhub-idle-culler
 
 
