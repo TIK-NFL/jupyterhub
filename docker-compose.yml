@@ -37,10 +37,6 @@ services:
     jupyterhub_proxy:
         build:
             context: configurable-http-proxy
-            args:
-                - SSL_KEY_FILE=ssl/jupyterhub_proxy.key
-                - SSL_CRT_FILE=ssl/jupyterhub_proxy.crt
-                - SSL_CA_FILE=ssl/jupyterhub_proxy_chain.crt
         container_name: jupyterhub_proxy
         image: configurable-http-proxy-ssl
         hostname: jupyterhub_proxy
@@ -50,6 +46,8 @@ services:
             - "8000:8000"
         environment:
             - CONFIGPROXY_AUTH_TOKEN
+        volumes:
+            - ./configurable-http-proxy/ssl:/etc/ssl/jupyter-docker-ssl
         restart: unless-stopped
 
 networks:

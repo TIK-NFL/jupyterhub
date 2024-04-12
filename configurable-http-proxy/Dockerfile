@@ -1,21 +1,14 @@
 FROM quay.io/jupyterhub/configurable-http-proxy:4.6.1
 
-ARG SSL_KEY_FILE
-ARG SSL_CRT_FILE
-ARG SSL_CA_FILE
+ARG SSL_KEY_FILE=/etc/ssl/jupyter-docker-ssl/jupyterhub_proxy.key
+ARG SSL_CRT_FILE=/etc/ssl/jupyter-docker-ssl/jupyterhub_proxy.crt
+#ARG SSL_CA_FILE=/etc/ssl/jupyter-docker-certs/jupyterhub_proxy_chain.crt
 
-USER 0
-
-COPY ${SSL_KEY_FILE} /etc/ssl/private/jupyterhub_proxy.key
-COPY ${SSL_CRT_FILE} /etc/ssl/certs/jupyterhub_proxy.crt
-COPY ${SSL_CA_FILE} /etc/ssl/certs/jupyterhub_proxy_chain.crt
-
-CMD [ \
-        "--port=8000", \
-        "--api-port=8001", \
-        "--default-target=http://jupyterhub_hub:8081", \
-        "--error-target=http://jupyterhub_hub:8081/hub/error", \
-        "--ssl-key=/etc/ssl/private/jupyterhub_proxy.key", \
-        "--ssl-cert=/etc/ssl/certs/jupyterhub_proxy.crt", \
-        "--ssl-ca=/etc/ssl/certs/jupyterhub_proxy_chain.crt" \
-    ]
+ENTRYPOINT /srv/configurable-http-proxy/chp-docker-entrypoint \
+        --port=8000 \
+        --api-port=8001 \
+        --default-target=http://jupyterhub_hub:8081 \
+        --error-target=http://jupyterhub_hub:8081/hub/error \
+        --ssl-key=${SSL_KEY_FILE} \
+        --ssl-cert=${SSL_CRT_FILE}
+#        --ssl-ca=${SSL_CA_FILE}
