@@ -9,7 +9,7 @@ ENV SSL_CRT_FILE=${SSL_CRT_FILE}
 ENV SSL_CA_FILE=${SSL_CA_FILE}
 
 
-USER 1000
+USER 0
 
 ENTRYPOINT /srv/configurable-http-proxy/chp-docker-entrypoint \
         --port=8000 \
