@@ -38,7 +38,6 @@ services:
         build:
             context: configurable-http-proxy
         container_name: jupyterhub_proxy
-        image: configurable-http-proxy-ssl
         hostname: jupyterhub_proxy
         networks:
             - jupyterhub_network
