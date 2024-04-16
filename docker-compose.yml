@@ -47,7 +47,7 @@ services:
         environment:
             - CONFIGPROXY_AUTH_TOKEN
         volumes:
-            - ./configurable-http-proxy/ssl:/etc/ssl/jupyter-docker-ssl
+            - ${SSL_DIR_PATH}:/etc/ssl/jupyter-docker-ssl
         restart: unless-stopped
 
 networks:
