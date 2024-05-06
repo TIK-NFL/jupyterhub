@@ -11,10 +11,16 @@ RUN apt-get update; \
 USER 1000
 
 # ======================================================================================================================
+# Python modules
+#
+
+RUN pip install matplotlib numpy scipy scikit-learn pandas tensorflow
+
+# ======================================================================================================================
 # Jupyter extensions
 #
 
-RUN pip install --upgrade ipywidgets matplotlib numpy scipy scikit-learn nbconvert playwright; \
+RUN pip install --upgrade ipywidgets nbconvert playwright; \
     playwright install chromium
 
 # ======================================================================================================================
