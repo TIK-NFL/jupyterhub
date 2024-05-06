@@ -100,6 +100,7 @@ USER 1000
 #
 
 RUN pip uninstall --yes nbclassic
+RUN jupyter labextension disable "@jupyterlab/apputils-extension:announcements"
 
 # --------------------------------------------------- jpyintegext ------------------------------------------------------
 #USER 1000
