@@ -56,9 +56,9 @@ RUN R -e 'IRkernel::installspec()'
 # ------------------------------------------------- Xeus-Clang kernel --------------------------------------------------
 ENV PATH="${PATH}:/opt/mambaforge/bin"
 
-RUN MAMBAFORGE_RELEASE="23.3.1-1" && \
-    INSTALL_SCRIPT_LOC="https://github.com/conda-forge/miniforge/releases/download" && \
-    INSTALL_SCRIPT="Mambaforge-${MAMBAFORGE_RELEASE}-Linux-x86_64.sh" && \
+RUN MAMBAFORGE_RELEASE="23.3.1-1"; \
+    INSTALL_SCRIPT_LOC="https://github.com/conda-forge/miniforge/releases/download"; \
+    INSTALL_SCRIPT="Mambaforge-${MAMBAFORGE_RELEASE}-Linux-x86_64.sh"; \
     curl -OL "${INSTALL_SCRIPT_LOC}/${MAMBAFORGE_RELEASE}/${INSTALL_SCRIPT}" && \
     bash ${INSTALL_SCRIPT} -p /opt/mambaforge -b && \
     rm ${INSTALL_SCRIPT}
