@@ -56,6 +56,7 @@ RUN R -e 'IRkernel::installspec()'
 # ------------------------------------------------- Xeus-Clang kernel --------------------------------------------------
 ENV PATH="${PATH}:/opt/mambaforge/bin"
 
+USER 0
 RUN MAMBAFORGE_RELEASE="23.3.1-1"; \
     INSTALL_SCRIPT_LOC="https://github.com/conda-forge/miniforge/releases/download"; \
     INSTALL_SCRIPT="Mambaforge-${MAMBAFORGE_RELEASE}-Linux-x86_64.sh"; \
@@ -63,6 +64,7 @@ RUN MAMBAFORGE_RELEASE="23.3.1-1"; \
     bash ${INSTALL_SCRIPT} -p /opt/mambaforge -b && \
     rm ${INSTALL_SCRIPT}
 
+USER 1000
 RUN mamba install -y xeus-cling -c conda-forge && \
     jupyter-kernelspec uninstall -y xcpp11 xcpp14  # only retain xcpp17
 
