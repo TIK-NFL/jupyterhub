@@ -20,7 +20,7 @@ RUN pip install matplotlib numpy scipy scikit-learn pandas tensorflow
 # Jupyter extensions
 #
 
-RUN pip install --upgrade ipywidgets nbconvert playwright; \
+RUN pip install --upgrade ipywidgets nbconvert playwright ipython ipympl; \
     playwright install chromium
 
 # ======================================================================================================================
