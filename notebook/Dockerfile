@@ -7,7 +7,8 @@ FROM quay.io/jupyter/base-notebook:hub-4.1.5
 
 USER 0
 RUN apt-get update && \
-    apt-get install -y vim curl wget jq patch pandoc texlive-xetex texlive-fonts-recommended texlive-plain-generic
+    apt-get install -y vim curl wget jq patch pandoc texlive-xetex texlive-fonts-recommended texlive-plain-generic  \
+        texlive-latex-extra texlive-fonts-recommended dvipng cm-super
 USER 1000
 
 # ======================================================================================================================
