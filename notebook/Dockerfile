@@ -14,7 +14,7 @@ USER 1000
 # Python modules
 #
 
-RUN pip install matplotlib numpy scipy scikit-learn pandas tensorflow
+RUN pip install matplotlib numpy scipy scikit-learn pandas tensorflow networkx
 
 # ======================================================================================================================
 # Jupyter extensions
