@@ -63,7 +63,7 @@ c.DockerSpawner.remove = True
 # c.Spawner.debug = True
 
 c.Spawner.default_url = '/lab'  # '/notebooks' for classic view or '/lab' for JupyterLab view
-c.Spawner.mem_limit = '4G'
+c.Spawner.mem_limit = '1G'
 
 # ======================================================================================================================
 # Access control origins
