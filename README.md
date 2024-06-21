@@ -157,6 +157,39 @@ The following reference configuration of an Apache webserver contains reverse pr
 
 All requests sent to `/jupyter` will be rerouted to `jupyterhub_proxy:8000/jupyter`.
 
+## Firewall config (iptables)
+
+In case that single user servers, i.e. jupyter users, should be isolated from the outbound network access, the firewall running on the same system as the Jupyterhub can be configured as follows.
+Firstly, we need to assign a static IP address to each docker compose service.
+Therefore, specify a subnet used by all docker containers created/spawned by this project within `docker-compose.yml`. E.g.,
+```
+# ...
+networks:
+    jupyterhub_network:
+        name: jupyterhub_network
+        ipam:
+            config:
+                - subnet: 172.27.0.0/16
+```
+
+Subsequently, assign an IP address from this subnet to each docker compose service by adding the `ipv4_address` value to the `jupyterhub_network` section of the respective service. E.g.,
+```
+networks:
+    jupyterhub_network:
+        ipv4_address: 172.27.0.2
+```
+Assuming that the static IP address `172.27.0.2` should be assigned to  `jupyterhub_hub`, `172.27.0.3` to `jupyterhub_db` and `172.27.0.4` to `jupyterhub_proxy`, configure your iptables chain `DOCKER-USER` as follows:
+```
+# Exceptions for Jupyterhub, Postgres and Proxy containers
+iptables -A DOCKER-USER -s 172.27.0.2,172.27.0.3,172.27.0.4 -j ACCEPT
+
+# Exceptions for user containers to connect to Jupyterhub and Proxy only!
+iptables -A DOCKER-USER -s 172.27.0.0/16 -d 172.27.0.2,172.27.0.4 -j ACCEPT
+
+# Reject all packets coming from the docker network/subnet
+iptables -A DOCKER-USER -s 172.27.0.0/16 -j REJECT
+```
+
 
 ## Single User Server
 
