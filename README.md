@@ -190,6 +190,16 @@ iptables -A DOCKER-USER -s 172.27.0.0/16 -d 172.27.0.2,172.27.0.4 -j ACCEPT
 iptables -A DOCKER-USER -s 172.27.0.0/16 -j REJECT
 ```
 
+## URL binding for production
+
+Make sure to update the `c.JupyterHub.bind_url` property within `jupyterhub/jupyter_config.py` to the public facing URL of the proxy (i.e. the whole Jupyter application). E.g.,
+```
+# Binding
+c.JupyterHub.hub_ip = ''
+c.JupyterHub.base_url = ''
+c.JupyterHub.bind_url = 'https://my.jupyterhub.tld:8000'
+```
+
 
 ## Single User Server
 
