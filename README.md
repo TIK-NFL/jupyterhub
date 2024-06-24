@@ -180,15 +180,17 @@ networks:
 ```
 Assuming that the static IP address `172.27.0.2` should be assigned to  `jupyterhub_hub`, `172.27.0.3` to `jupyterhub_db` and `172.27.0.4` to `jupyterhub_proxy`, configure your iptables chain `DOCKER-USER` as follows:
 ```
-# Exceptions for Jupyterhub, Postgres and Proxy containers
-iptables -A DOCKER-USER -s 172.27.0.2,172.27.0.3,172.27.0.4 -j ACCEPT
+# Reject all packets coming from the docker network/subnet
+iptables -I DOCKER-USER -s 172.27.0.0/16 -j REJECT
 
 # Exceptions for user containers to connect to Jupyterhub and Proxy only!
-iptables -A DOCKER-USER -s 172.27.0.0/16 -d 172.27.0.2,172.27.0.4 -j ACCEPT
+iptables -I DOCKER-USER -s 172.27.0.0/16 -d 172.27.0.2,172.27.0.4 -j ACCEPT
 
-# Reject all packets coming from the docker network/subnet
-iptables -A DOCKER-USER -s 172.27.0.0/16 -j REJECT
+# Exceptions for Jupyterhub, Postgres and Proxy containers
+iptables -I DOCKER-USER -s 172.27.0.2,172.27.0.3,172.27.0.4 -j ACCEPT
 ```
+
+After modification of iptables, a restart of the docker daemon might be required depending on your system configuration.
 
 ## URL binding for production
 
@@ -197,7 +199,7 @@ Make sure to update the `c.JupyterHub.bind_url` property within `jupyterhub/jupy
 # Binding
 c.JupyterHub.hub_ip = ''
 c.JupyterHub.base_url = ''
-c.JupyterHub.bind_url = 'https://my.jupyterhub.tld:8000'
+c.JupyterHub.bind_url = 'https://jupyterhub.mydomain.tld:8000'
 ```
 
 
