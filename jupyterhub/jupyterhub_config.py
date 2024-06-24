@@ -113,9 +113,6 @@ c.JupyterHub.authenticator_class = RejectAuthenticator
 
 c.JupyterHub.services = [
     {
-        'name': 'service-admin'
-    },
-    {
         "name": "jupyterhub-idle-culler-service",
         "command": [
             sys.executable, "-m", "jupyterhub_idle_culler", "--timeout=360", "--cull-users"
@@ -126,6 +123,9 @@ c.JupyterHub.services = [
 # Get service admin users and tokens from env variable.
 admin_services_env = os.environ.get('JPY_ADMIN_SERVICES')
 admin_services = [(sa.split(':')[0], sa.split(':')[1]) for sa in admin_services_env.split(';')]
+
+# Register admin services
+c.JupyterHub.services.extend([{'name': admin_service[0]} for admin_service in admin_services])
 
 # Define additional tokens for existing services.
 c.JupyterHub.service_tokens = {}
