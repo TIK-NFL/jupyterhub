@@ -14,7 +14,7 @@ services:
             - CONFIGPROXY_AUTH_TOKEN
             - DOCKER_NETWORK_NAME
             - DOCKER_NOTEBOOK_IMAGE
-            - JPY_SERVICE_ADMINS
+            - JPY_ADMIN_SERVICES
             - JPY_COOKIE_SECRET
             - ACCESS_CONTROL_ORIGINS
         depends_on:

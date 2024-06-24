@@ -11,7 +11,7 @@ c = get_config()
 # Binding
 c.JupyterHub.hub_ip = ''
 # proxy route entry to jupyterhub
-c.JupyterHub.base_url = '/jupyter'
+c.JupyterHub.base_url = ''
 #c.JupyterHub.bind_url = 'https://jupyterhub_proxy:8000/jupyter'
 
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
@@ -69,9 +69,7 @@ c.Spawner.mem_limit = '1G'
 # Access control origins
 #
 
-access_control_origins = ''
-for origin in os.environ.get('ACCESS_CONTROL_ORIGINS').split(';'):
-    access_control_origins += origin + ' '
+access_control_origins = os.environ.get('ACCESS_CONTROL_ORIGINS').replace(';', ' ')
 
 c.JupyterHub.tornado_settings = {
     'headers': {
@@ -126,14 +124,14 @@ c.JupyterHub.services = [
 ]
 
 # Get service admin users and tokens from env variable.
-service_admins_env = os.environ.get('JPY_SERVICE_ADMINS')
-service_admins = [(sa.split(':')[0], sa.split(':')[1]) for sa in service_admins_env.split(';')]
+admin_services_env = os.environ.get('JPY_ADMIN_SERVICES')
+admin_services = [(sa.split(':')[0], sa.split(':')[1]) for sa in admin_services_env.split(';')]
 
 # Define additional tokens for existing services.
 c.JupyterHub.service_tokens = {}
 
-for service_admin in service_admins:
-    c.JupyterHub.service_tokens[service_admin[1]] = service_admin[0]
+for admin_service in admin_services:
+    c.JupyterHub.service_tokens[admin_service[1]] = admin_service[0]
 
 c.JupyterHub.load_roles = [
     {
@@ -147,7 +145,7 @@ c.JupyterHub.load_roles = [
             'servers',
             'tokens'
         ],
-        'services': [service_admin[0] for service_admin in service_admins]
+        'services': [admin_service[0] for admin_service in admin_services]
     },
     {
         "name": "jupyterhub-idle-culler-role",

@@ -30,7 +30,7 @@ Thus, the integrator might want to save all data by requesting it from the REST 
     POSTGRES_PASSWORD=$(openssl rand -hex 32)
     CONFIGPROXY_AUTH_TOKEN=$(openssl rand -hex 32)
     DOCKER_NETWORK_NAME=jupyterhub_network
-    JPY_SERVICE_ADMINS=service-admin:$(openssl rand -hex 64)
+    JPY_ADMIN_SERVICES=service-admin:$(openssl rand -hex 64)
     JPY_COOKIE_SECRET=$(openssl rand -hex 64)
     DOCKER_NOTEBOOK_IMAGE=embedded-jupyterhub-notebook:latest
     ACCESS_CONTROL_ORIGINS=
@@ -42,9 +42,9 @@ Thus, the integrator might want to save all data by requesting it from the REST 
    | Field                    | Description                                                                                               | Example                                     |
    |--------------------------|-----------------------------------------------------------------------------------------------------------|---------------------------------------------|
    | `CONFIGPROXY_AUTH_TOKEN` | Token used by jupyterhub to authenticate against the proxy server                                         |                                             |
-   | `JPY_SERVICE_ADMINS`     | Admin service names and tokens, e.g. used in API calls or plugins _(separated list of tuples)_            | `admserv1:token1;admserv2:token2`           |
+   | `JPY_ADMIN_SERVICES`     | Admin service names and tokens, e.g. used in API calls or plugins _(separated list of tuples)_            | `admserv1:token1;admserv2:token2`           |
    | `DOCKER_NOTEBOOK_IMAGE`  | Default jupyter notebook image to be spawned in each session                                              |                                             |
-   | `ACCESS_CONTROL_ORIGINS` | Origins that are allowed to integrate/embed the jupyterhub, e.g. via iframe _(separated list of strings)_ | `https://127.1.2.7/;https://example.domain` |
+   | `ACCESS_CONTROL_ORIGINS` | Origins that are allowed to integrate/embed the jupyterhub, e.g. via iframe _(separated list of strings)_ | `https://127.1.2.7;https://example.domain` |
 
 3. If you want to use the single user image provided by this project, build the image with
    ```
@@ -107,55 +107,11 @@ networks:
         external: true
 ```
 
-## Integrated usage
+## Embedded usage
 
 This configuration enables Jupyterhub to be used in an integrated manner, e.g., embedded via iframe, while other backend services are communicating with the Jupyterhub REST API and single user server endpoints.
 Being embedded, Jupyter frontend needs to send requests to Jupyterhub URLs which might not match with the origin resulting in conflicts with the CORS policies.
-
 Thus, the recommended way is to set `ACCESS_CONTROL_ORIGINS` to the origins which are allowed to embed Jupyter (see above).
-As another solution, the webserver that embeds Jupyter must be configured with ProxyPass rules, which route requests to correct Jupyterhub URL.
-The following reference configuration of an Apache webserver contains reverse proxy rules, which affect HTTPS as well as secure websocket connections (WSS).
-
-```
-<VirtualHost _default_:443>
-    DocumentRoot /var/www/html
-
-    #
-    # SSL config
-    #
-
-    SSLEngine on
-    SSLCertificateFile	/etc/ssl/certs/server.crt
-    SSLCertificateKeyFile /etc/ssl/private/server.key
-
-    #
-    # SSL reverse proxy
-    #
-
-    SSLProxyEngine On
-
-    # TODO: Disabled for development. Be sure to remove/enable in production environments.
-    SSLProxyVerify none
-    SSLProxyCheckPeerName off
-
-    # Rewrite rules to proxy websocket connections
-    RewriteEngine on
-    RewriteCond %{HTTP:Upgrade} websocket [NC]
-    RewriteCond %{HTTP:Connection} upgrade [NC]
-    RewriteRule /jupyter/(.*) "wss://jupyterhub_proxy:8000/jupyter/$1" [P,L]
-
-    <Location "/jupyter">
-        # preserve host header to avoid cross-origin problems
-        ProxyPreserveHost on
-        ProxyPass         https://jupyterhub_proxy:8000/jupyter
-        ProxyPassReverse  https://jupyterhub_proxy:8000/jupyter
-        RequestHeader     set "X-Forwarded-Proto" expr=%{REQUEST_SCHEME}
-    </Location>
-
-</VirtualHost>
-```
-
-All requests sent to `/jupyter` will be rerouted to `jupyterhub_proxy:8000/jupyter`.
 
 ## Firewall config (iptables)
 
