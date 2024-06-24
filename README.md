@@ -1,4 +1,4 @@
-# Integrable Jupyterhub
+# Embedded Jupyterhub
 
 This reference configuration provides a cloud-based Jupyterhub deployment for integrated usage, e.g., embedded within other applications.
 It supports only short-lived sessions which are managed by the DockerSpawner.
@@ -21,7 +21,7 @@ Thus, the integrator might want to save all data by requesting it from the REST 
 
 ## Build and Run using docker-compose
 
-1. Clone the integrable Jupyterhub and enter the base directory of the project.
+1. Clone the Embedded Jupyterhub and enter the base directory of the project.
 2. Generate an `.env` file containing definitions of environment variables which are passed to the services we want to build.
     ```
     cat << EOF > .env
@@ -32,7 +32,7 @@ Thus, the integrator might want to save all data by requesting it from the REST 
     DOCKER_NETWORK_NAME=jupyterhub_network
     JPY_SERVICE_ADMINS=service-admin:$(openssl rand -hex 64)
     JPY_COOKIE_SECRET=$(openssl rand -hex 64)
-    DOCKER_NOTEBOOK_IMAGE=integrable-jupyterhub-notebook:latest
+    DOCKER_NOTEBOOK_IMAGE=embedded-jupyterhub-notebook:latest
     ACCESS_CONTROL_ORIGINS=
     SSL_DIR_PATH=./configurable-http-proxy/ssl
     EOF
@@ -48,9 +48,9 @@ Thus, the integrator might want to save all data by requesting it from the REST 
 
 3. If you want to use the single user image provided by this project, build the image with
    ```
-   docker build -t integrable-jupyterhub-notebook:latest notebook/
+   docker build -t embedded-jupyterhub-notebook:latest notebook/
    ```
-   and change the `DOCKER_NOTEBOOK_IMAGE` variable to `integrable-jupyterhub-notebook:latest` within the `.env` file.
+   and change the `DOCKER_NOTEBOOK_IMAGE` variable to `embedded-jupyterhub-notebook:latest` within the `.env` file.
    Note that you might also build your own user server images upon the proposed one, e.g. to install another kernels.
 
 4. In case of __development__, generate self-signed SSL key pairs within `configurable-http-proxy/ssl` with: 
@@ -205,7 +205,7 @@ c.JupyterHub.bind_url = 'https://jupyterhub.mydomain.tld:8000'
 
 ## Single User Server
 
-The single user server image configured by Integrable Jupyterhub ships with the following kernels:
+The single user server image configured by Embedded Jupyterhub ships with the following kernels:
 
 | Language | Lang. version            | Jupyter kernel            | Reference                                                                                                           |
 |----------|--------------------------|---------------------------|---------------------------------------------------------------------------------------------------------------------|
