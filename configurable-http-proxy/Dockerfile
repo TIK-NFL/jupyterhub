@@ -1,4 +1,4 @@
-FROM quay.io/jupyterhub/configurable-http-proxy:4.6.1
+FROM quay.io/jupyterhub/configurable-http-proxy:4.6.2
 
 ARG SSL_KEY_FILE=jupyterhub_proxy.key
 ARG SSL_CRT_FILE=jupyterhub_proxy.crt

@@ -65,6 +65,9 @@ c.DockerSpawner.remove = True
 c.Spawner.default_url = '/lab'  # '/notebooks' for classic view or '/lab' for JupyterLab view
 c.Spawner.mem_limit = '1G'
 
+# Environment.
+c.Spawner.environment.update({"JUPYTERHUB_ALLOW_TOKEN_IN_URL": "1"})
+
 # ======================================================================================================================
 # Access control origins
 #
