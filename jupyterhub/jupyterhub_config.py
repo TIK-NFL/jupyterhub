@@ -101,6 +101,7 @@ c.Spawner.args = ["--ServerApp.tornado_settings={}".format(str(serverapp_tornado
 #
 
 c.Authenticator.admin_users = {'admin'}
+c.Authenticator.any_allow_config = True
 
 class RejectAuthenticator(Authenticator):
     async def authenticate(self, handler, data):
