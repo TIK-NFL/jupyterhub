@@ -107,10 +107,9 @@ RUN jupyter labextension disable "@jupyterlab/apputils-extension:announcements"
 # Disable safeguard dialog for unsaved changes. Unsaved changes are handled by the Jupyterlab integration extension.
 RUN jupyter labextension disable "@jupyterlab/application-extension:dirty"
 
-# --------------------------------------------------- jpyintegext ------------------------------------------------------
-#USER 1000
-#COPY --chown=1000:100 res/jpyintegext-1.0.0.tar.gz .local/share/packages/jpyintegext.tar.gz
-#RUN pip install --user .local/share/packages/jpyintegext.tar.gz
+# ----------------------------------------- Jupyterlab integration extension -------------------------------------------
+USER 1000
+RUN pip install --user git+https://github.com/TIK-NFL/jupyterlab-integration-extension@1.0.1
 
 
 # Switch to the standard jupyter user 'jovyan'
