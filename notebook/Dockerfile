@@ -101,7 +101,10 @@ USER 1000
 #
 
 RUN pip uninstall --yes nbclassic
+# Disable Jupyter news and update announcements
 RUN jupyter labextension disable "@jupyterlab/apputils-extension:announcements"
+# Disable safeguard dialog for unsaved changes. Unsaved changes are handled by the Jupyterlab integration extension.
+RUN jupyter labextension disable "@jupyterlab/application-extension:dirty"
 
 # --------------------------------------------------- jpyintegext ------------------------------------------------------
 #USER 1000
