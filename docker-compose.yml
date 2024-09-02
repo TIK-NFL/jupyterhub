@@ -17,6 +17,7 @@ services:
             - JPY_ADMIN_SERVICES
             - JPY_COOKIE_SECRET
             - ACCESS_CONTROL_ORIGINS
+            - JUPYTERHUB_CRYPT_KEY
         depends_on:
             - jupyterhub_db
             - jupyterhub_proxy

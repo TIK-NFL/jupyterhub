@@ -1,4 +1,4 @@
-FROM quay.io/jupyter/base-notebook:hub-5.0.0
+FROM quay.io/jupyter/base-notebook:hub-5.1.0
 
 
 # ======================================================================================================================
@@ -107,9 +107,10 @@ RUN jupyter labextension disable "@jupyterlab/apputils-extension:announcements"
 # Disable safeguard dialog for unsaved changes. Unsaved changes are handled by the Jupyterlab integration extension.
 RUN jupyter labextension disable "@jupyterlab/application-extension:dirty"
 
-# ----------------------------------------- Jupyterlab integration extension -------------------------------------------
-USER 1000
-RUN pip install --user git+https://github.com/TIK-NFL/jupyterlab-integration-extension@1.0.1
+# Custom startup script to support parameter passthrough via LTI (JWT) claims
+USER 0
+COPY scripts/custom_user_server_startup.sh /usr/local/bin/custom_user_server_startup
+RUN chmod +x /usr/local/bin/custom_user_server_startup
 
 
 # Switch to the standard jupyter user 'jovyan'

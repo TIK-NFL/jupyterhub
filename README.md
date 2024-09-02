@@ -35,6 +35,7 @@ Thus, the integrator might want to save all data by requesting it from the REST 
     DOCKER_NOTEBOOK_IMAGE=embedded-jupyterhub-notebook:latest
     ACCESS_CONTROL_ORIGINS=
     SSL_DIR_PATH=./configurable-http-proxy/ssl
+    JUPYTERHUB_CRYPT_KEY=$(openssl rand -hex 32)
     EOF
     ```
    Note that the `openssl rand` commands will generate secrets such as service tokens and passwords.
