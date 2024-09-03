@@ -70,22 +70,6 @@ USER 1000
 RUN mamba install -y xeus-cling -c conda-forge && \
     jupyter-kernelspec uninstall -y xcpp11 xcpp14  # only retain xcpp17
 
-# ---------------------------------------------------- Java kernel -----------------------------------------------------
-USER 0
-RUN apt-get install -y openjdk-18-jdk openjdk-18-jre-headless openjdk-18-source
-
-USER 1000
-RUN IJAVA_RELEASE="1.3.0" && \
-    IJAVA_ARCHIVE_URL="https://github.com/SpencerPark/IJava/releases/download/v${IJAVA_RELEASE}/ijava-${IJAVA_RELEASE}.zip" && \
-    IJAVA_TMP_DIR="/tmp/ijava" && \
-    mkdir -p ${IJAVA_TMP_DIR} && \
-    curl -L ${IJAVA_ARCHIVE_URL} -o ${IJAVA_TMP_DIR}/archive.zip && \
-    unzip -d ${IJAVA_TMP_DIR} ${IJAVA_TMP_DIR}/archive.zip && \
-    python ${IJAVA_TMP_DIR}/install.py --sys-prefix && \
-    rm -rf ${IJAVA_TMP_DIR}
-
-COPY res/java-logo-svg.svg /opt/conda/share/jupyter/kernels/java/logo-svg.svg
-
 
 # ======================================================================================================================
 # Patches
