@@ -32,6 +32,8 @@ c.ConfigurableHTTPProxy.should_start = False
 # do not stop/remove any running servers when jupyterhub shuts down or restarts
 c.JupyterHub.cleanup_servers = False
 
+c.JupyterHub.shutdown_on_logout = True
+
 # Debugging
 # c.Application.log_level = 'DEBUG'
 # c.JupyterHub.log_level = 'DEBUG'
