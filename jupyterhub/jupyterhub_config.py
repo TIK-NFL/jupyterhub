@@ -51,6 +51,7 @@ c.JupyterHub.db_url = 'postgresql://{}:{}@jupyterhub_db:5432/{}'.format(
 # Spawner config
 #
 
+c.DockerSpawner.image = os.environ.get('DOCKER_NOTEBOOK_IMAGE', c.DockerSpawner.image)
 c.DockerSpawner.network_name = os.environ.get('DOCKER_NETWORK_NAME', c.DockerSpawner.network_name)
 
 notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR', '/home/jovyan/work')
@@ -137,6 +138,9 @@ c.JupyterHub.authenticator_class = 'multiauthenticator.multiauthenticator.MultiA
 
 
 def auth_state_spawner_hook(spawner, auth_state):
+    if not auth_state:
+        return
+
     data = auth_state.get("https://purl.imsglobal.org/spec/lti/claim/custom", {})
 
     if 'USER_SERVER_IMAGE' in data:
