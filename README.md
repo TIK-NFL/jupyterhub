@@ -33,7 +33,6 @@ Thus, the integrator might want to save all data by requesting it from the REST 
     JPY_ADMIN_SERVICES=service-admin:$(openssl rand -hex 64)
     JPY_COOKIE_SECRET=$(openssl rand -hex 64)
     DOCKER_NOTEBOOK_IMAGE=embedded-jupyterhub-notebook:latest
-    ACCESS_CONTROL_ORIGINS=
     SSL_DIR_PATH=./configurable-http-proxy/ssl
     JUPYTERHUB_CRYPT_KEY=$(openssl rand -hex 32)
     EOF
@@ -45,7 +44,6 @@ Thus, the integrator might want to save all data by requesting it from the REST 
    | `CONFIGPROXY_AUTH_TOKEN` | Token used by jupyterhub to authenticate against the proxy server                                         |                                             |
    | `JPY_ADMIN_SERVICES`     | Admin service names and tokens, e.g. used in API calls or plugins _(separated list of tuples)_            | `admserv1:token1;admserv2:token2`           |
    | `DOCKER_NOTEBOOK_IMAGE`  | Default jupyter notebook image to be spawned in each session                                              |                                             |
-   | `ACCESS_CONTROL_ORIGINS` | Origins that are allowed to integrate/embed the jupyterhub, e.g. via iframe _(separated list of strings)_ | `https://127.1.2.7;https://example.domain` |
 
 3. If you want to use the single user image provided by this project, build the image with
    ```
@@ -107,12 +105,6 @@ networks:
         # allows using an existing network stack not defined by this docker-compose file.
         external: true
 ```
-
-## Embedded usage
-
-This configuration enables Jupyterhub to be used in an integrated manner, e.g., embedded via iframe, while other backend services are communicating with the Jupyterhub REST API and single user server endpoints.
-Being embedded, Jupyter frontend needs to send requests to Jupyterhub URLs which might not match with the origin resulting in conflicts with the CORS policies.
-Thus, the recommended way is to set `ACCESS_CONTROL_ORIGINS` to the origins which are allowed to embed Jupyter (see above).
 
 ## Firewall config (iptables)
 

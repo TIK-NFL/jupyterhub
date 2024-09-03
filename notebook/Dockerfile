@@ -75,11 +75,6 @@ RUN mamba install -y xeus-cling -c conda-forge && \
 # Patches
 #
 
-USER 0
-COPY patches/*.py.patch /tmp/
-RUN patch /opt/conda/lib/python3.11/http/cookies.py < /tmp/cookies.py.patch && \
-    patch /opt/conda/lib/python3.11/site-packages/jupyter_server/serverapp.py < /tmp/serverapp.py.patch
-USER 1000
 
 # ======================================================================================================================
 # Customizations

@@ -75,33 +75,6 @@ c.Spawner.mem_limit = '1G'
 # Environment.
 c.Spawner.environment.update({"JUPYTERHUB_ALLOW_TOKEN_IN_URL": "1"})
 
-# ======================================================================================================================
-# Access control origins
-#
-
-access_control_origins = os.environ.get('ACCESS_CONTROL_ORIGINS').replace(';', ' ')
-
-c.JupyterHub.tornado_settings = {
-    'headers': {
-        'Access-Control-Allow-Origin': access_control_origins,
-    },
-    'cookie_options': {
-        'SameSite': 'None',
-        'Secure': True,
-        'Partitioned': True
-    },
-}
-
-serverapp_tornado_settings = {
-    'headers': {
-        'Content-Security-Policy': "frame-ancestors 'self' " + access_control_origins
-    },
-    'xsrf_cookie_kwargs': {
-        'Partitioned': True
-    }
-}
-
-c.Spawner.args = ["--ServerApp.tornado_settings={}".format(str(serverapp_tornado_settings))]
 
 # ======================================================================================================================
 # Authenticator

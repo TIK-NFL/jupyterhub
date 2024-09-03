@@ -23,13 +23,6 @@ RUN jupyter nbextension enable --py widgetsnbextension
 
 
 # ======================================================================================================================
-# Patches
-#
-
-COPY patches/cookies.py.patch /tmp/cookies.py.patch
-RUN patch /usr/lib/python3.10/http/cookies.py < /tmp/cookies.py.patch
-
-# ======================================================================================================================
 # Config
 #
 
