@@ -88,9 +88,15 @@ RUN jupyter labextension disable "@jupyterlab/application-extension:dirty"
 
 # Custom startup script to support parameter passthrough via LTI (JWT) claims
 USER 0
+
+# Custom config
+RUN sed -i 's/c.FileContentsManager.delete_to_trash = False/c.FileContentsManager.always_delete_dir = True/g' /etc/jupyter/jupyter_server_config.py
+
+# Custom user server startup
 COPY scripts/custom_user_server_startup.sh /usr/local/bin/custom_user_server_startup
 RUN chmod +x /usr/local/bin/custom_user_server_startup
 
+RUN mkdir -p /home/jovyan/instructor_volume && chown -R jovyan:users /home/jovyan/instructor_volume
 
 # Switch to the standard jupyter user 'jovyan'
 USER 1000

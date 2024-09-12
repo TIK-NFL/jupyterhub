@@ -116,23 +116,55 @@ def auth_state_spawner_hook(spawner, auth_state):
     if not auth_state:
         return
 
-    data = auth_state.get("https://purl.imsglobal.org/spec/lti/claim/custom", {})
+    # Data extraction
+    roles_data_list = auth_state['https://purl.imsglobal.org/spec/lti/claim/roles']
+    tool_platform_data = auth_state['https://purl.imsglobal.org/spec/lti/claim/tool_platform']
+    context_data = auth_state['https://purl.imsglobal.org/spec/lti/claim/context']
+    resource_link_data = auth_state['https://purl.imsglobal.org/spec/lti/claim/resource_link']
+    custom_data = auth_state.get("https://purl.imsglobal.org/spec/lti/claim/custom", {})
 
-    if 'USER_SERVER_IMAGE' in data:
-        logger.info("Setting user server image '%s' from LTI custom field...", data['USER_SERVER_IMAGE'])
-        spawner.image = data['USER_SERVER_IMAGE']
+    # Determine instructor access
+    instructor_access = False
+    for role in roles_data_list:
+        if str(role.split('#')[-1]).lower() in ['administrator', 'instructor']:
+            instructor_access = True
+
+    instructor_volume_name = 'jupyterhub-user-lti-instructor-' + tool_platform_data['guid'] + '-' + context_data['id'] + '-' + resource_link_data['id']
+    spawner.volumes.update({
+        instructor_volume_name: {
+            'bind': '/home/jovyan/instructor_volume',
+            'mode': 'rw' if instructor_access else 'ro'
+        }
+    })
+
+    if instructor_access:
+        spawner.environment['INSTRUCTOR_ACCESS'] = 'true'
+        spawner.notebook_dir = '/home/jovyan/instructor_volume'
+
+    if 'RESOURCE_NAME' in custom_data:
+        spawner.environment['RESOURCE_NAME'] = custom_data['RESOURCE_NAME']
+    else:
+        spawner.environment['RESOURCE_NAME'] = 'RES-' + context_data['id'] + '-' + resource_link_data['id']
+
+    #
+    # Custom selection of the user server image
+    #
+    if 'USER_SERVER_IMAGE' in custom_data:
+        logger.info("Setting user server image '%s' from LTI custom field...", custom_data['USER_SERVER_IMAGE'])
+        spawner.image = custom_data['USER_SERVER_IMAGE']
     else:
         logger.info('Setting default user server image...')
         spawner.image = os.environ.get('DOCKER_NOTEBOOK_IMAGE', c.DockerSpawner.image)
 
-    if 'STARTUP_GIT_REPOSITORY' in data:
-        logger.info("Setting the startup Git repository to '%s'...", data['STARTUP_GIT_REPOSITORY'])
-        spawner.environment['STARTUP_GIT_REPOSITORY'] = data['STARTUP_GIT_REPOSITORY']
-        spawner.cmd = ['custom_user_server_startup']
+    if 'STARTUP_GIT_REPOSITORY' in custom_data:
+        logger.info("Setting the startup Git repository to '%s'...", custom_data['STARTUP_GIT_REPOSITORY'])
+        spawner.environment['STARTUP_GIT_REPOSITORY'] = custom_data['STARTUP_GIT_REPOSITORY']
 
-        if 'STARTUP_GIT_REPOSITORY_DIR_NAME' in data:
-            spawner.environment['STARTUP_GIT_REPOSITORY_DIR_NAME'] = data['STARTUP_GIT_REPOSITORY_DIR_NAME']
+        if 'STARTUP_GIT_REPOSITORY_DIR_NAME' in custom_data:
+            spawner.environment['STARTUP_GIT_REPOSITORY_DIR_NAME'] = custom_data['STARTUP_GIT_REPOSITORY_DIR_NAME']
 
+    # Always start with the custom user server startup script
+    spawner.cmd = ['custom_user_server_startup']
 
 c.DockerSpawner.auth_state_hook = auth_state_spawner_hook
 
