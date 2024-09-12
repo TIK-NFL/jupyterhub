@@ -129,7 +129,8 @@ def auth_state_spawner_hook(spawner, auth_state):
         if str(role.split('#')[-1]).lower() in ['administrator', 'instructor']:
             instructor_access = True
 
-    instructor_volume_name = 'jupyterhub-user-lti-instructor-' + tool_platform_data['guid'] + '-' + context_data['id'] + '-' + resource_link_data['id']
+    # Extra volume per LTI object shared by instructor roles
+    instructor_volume_name = f"jupyterhub-user-lti-instructor-{tool_platform_data['guid']}-{context_data['id']}-{resource_link_data['id']}"
     spawner.volumes.update({
         instructor_volume_name: {
             'bind': '/home/jovyan/instructor_volume',
@@ -141,10 +142,10 @@ def auth_state_spawner_hook(spawner, auth_state):
         spawner.environment['INSTRUCTOR_ACCESS'] = 'true'
         spawner.notebook_dir = '/home/jovyan/instructor_volume'
 
-    if 'RESOURCE_NAME' in custom_data:
-        spawner.environment['RESOURCE_NAME'] = custom_data['RESOURCE_NAME']
-    else:
-        spawner.environment['RESOURCE_NAME'] = 'RES-' + context_data['id'] + '-' + resource_link_data['id']
+    resource_name = f"{resource_link_data['title']} (RID-{context_data['id']}-{resource_link_data['id']})"
+    spawner.environment['RESOURCE_NAME'] = resource_name
+    spawner.default_url = f'/lab/tree/{resource_name}'
+
 
     #
     # Custom selection of the user server image
