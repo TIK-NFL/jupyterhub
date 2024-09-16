@@ -3,6 +3,7 @@ import sys
 import logging
 
 from ltiauthenticator.lti13.auth import LTI13Authenticator
+from tornado.web import HTTPError
 
 logger = logging.getLogger(__name__)
 
@@ -128,6 +129,11 @@ def auth_state_spawner_hook(spawner, auth_state):
     for role in roles_data_list:
         if str(role.split('#')[-1]).lower() in ['administrator', 'instructor']:
             instructor_access = True
+
+    if ('ONLINE' not in custom_data or custom_data['ONLINE'].lower() != 'true') and not instructor_access:
+        # The LTI object is not online for students. Abort spawning.
+        raise HTTPError(500, reason="LTI object resources are offline. "
+                                    "Please contact your instructor or course administrator.")
 
     # Extra volume per LTI object shared by instructor roles
     instructor_volume_name = f"jupyterhub-user-lti-instructor-{tool_platform_data['guid']}-{context_data['id']}-{resource_link_data['id']}"
