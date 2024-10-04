@@ -158,9 +158,6 @@ def auth_state_spawner_hook(spawner, auth_state):
     mode = 'rw' if instructor_access else 'ro'
     spawner.volumes.update({inst_volume_name: {'bind': '/home/jovyan/__shared', 'mode': mode}})
 
-    # Course-scoped metadata volume
-    spawner.volumes.update({f"jupyter_lti_metadata_{client_id}_{course_id}": {'bind': '/data/metadata', 'mode': 'rw'}})
-
     stud_submission_volume_partial_name = f"jupyter_lti_stud_submission_{client_id}_{course_id}_"
 
     if not instructor_access:
