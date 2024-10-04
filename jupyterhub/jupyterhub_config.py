@@ -148,9 +148,6 @@ def auth_state_spawner_hook(spawner, auth_state):
     if instructor_access:
         spawner.notebook_dir = '/home/jovyan/'
         spawner.environment['INSTRUCTOR_ACCESS'] = 'true'
-        spawner.environment['GRANT_SUDO'] = '1'
-        spawner.environment['UID'] = '0'
-        spawner.extra_create_kwargs = {'user': 'root'}
 
     #
     # Volumes
@@ -188,7 +185,6 @@ def auth_state_spawner_hook(spawner, auth_state):
     resource_local_path = f"{context_data['title']}/{resource_link_data['title']} (RID-{course_id}-{link_id})"
     spawner.environment['RESOURCE_LOCAL_PATH'] = resource_local_path
     spawner.default_url = '' if instructor_access else f'/lab/tree/{resource_local_path}'
-
 
     #
     # Custom selection of the user server image

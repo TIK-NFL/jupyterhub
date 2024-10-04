@@ -28,8 +28,6 @@ function delete_empty_dir() {
 #
 if [[ "${INSTRUCTOR_ACCESS}" == "true" ]]; then
   mkdir -p "${INSTRUCTOR_RESOURCE_DIR}"
-  # Remove sudo rights 
-  sudo rm /etc/sudoers.d/added-by-start-script
   # Clean up irrelevant directories to this role which were created by the default docker image.
   delete_empty_dir /home/jovyan/work/__submission
 fi 
@@ -44,8 +42,6 @@ if [[ "${INSTRUCTOR_ACCESS}" != "true" ]]; then
     mkdir -p "${STUDENT_RESOURCE_DIR}"
     cp -a "${INSTRUCTOR_RESOURCE_DIR}"/. "${STUDENT_RESOURCE_DIR}"
   fi
-  # Acknowledge the resource transmission.
-  sudo bash /usr/local/bin/custom_user_resource_ack
   
   # Create student's submission directory.
   [ -e "${STUDENT_SUBMISSION_DIR}" ] || mkdir -p "${STUDENT_SUBMISSION_DIR}"
@@ -58,7 +54,5 @@ if [[ "${INSTRUCTOR_ACCESS}" != "true" ]]; then
   # Clean up irrelevant directories to this role which were created by the default docker image.
   delete_empty_dir /home/jovyan/__submissions
 fi
-
-sudo rm /etc/sudoers.d/custom_sudo_commands
 
 exec jupyterhub-singleuser "$@"

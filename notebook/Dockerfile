@@ -102,10 +102,5 @@ RUN mkdir -p /data/metadata && chown root:root /data/metadata && chmod -R 700 /d
     mkdir -p /home/jovyan/work/__submission && chown jovyan:users /home/jovyan/work/__submission
 
 
-COPY scripts/custom_user_resource_ack /usr/local/bin/custom_user_resource_ack
-RUN chmod +x /usr/local/bin/custom_user_resource_ack
-
-COPY scripts/custom_sudo_commands /etc/sudoers.d/custom_sudo_commands
-
 # Switch to the standard jupyter user 'jovyan'
 USER 1000
