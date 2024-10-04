@@ -1,0 +1,64 @@
+#!/bin/bash
+
+#
+# A startup script executed on each user-server spawn authorized via LTI containing custom claims.
+#
+# Globals:
+#   RESOURCE_LOCAL_PATH A unique name that identifies the resource transferred to the working directory
+#   STARTUP_GIT_REPOSITORY The Git repository to be cloned on the startup
+#   STARTUP_GIT_REPOSITORY_DIR_NAME The directory name of the Git repository to be cloned
+#
+
+# Prevent the user server from starting up with undesired states.
+set -e
+
+CURRENT_TIMESTAMP="$(date +%s)"
+RESOURCE_LOCAL_PATH="${RESOURCE_LOCAL_PATH:-$CURRENT_TIMESTAMP}"
+INSTRUCTOR_RESOURCE_DIR="/home/jovyan/__shared/${RESOURCE_LOCAL_PATH}"
+STUDENT_RESOURCE_DIR="/home/jovyan/work/${RESOURCE_LOCAL_PATH}"
+STUDENT_SUBMISSION_DIR="/home/jovyan/work/__submission/${RESOURCE_LOCAL_PATH}"
+
+
+function delete_empty_dir() {
+  [ -z "$(ls -A "${1}")" ] && rm -rf "${1}"
+}
+
+#
+# Instructor startup operations
+#
+if [[ "${INSTRUCTOR_ACCESS}" == "true" ]]; then
+  mkdir -p "${INSTRUCTOR_RESOURCE_DIR}"
+  # Remove sudo rights 
+  sudo rm /etc/sudoers.d/added-by-start-script
+  # Clean up irrelevant directories to this role which were created by the default docker image.
+  delete_empty_dir /home/jovyan/work/__submission
+fi 
+
+#
+# Student startup operations
+#
+if [[ "${INSTRUCTOR_ACCESS}" != "true" ]]; then
+  
+  # Synchronize student's resources with instructor's resources from the read-only volume.
+  if [ -d "${INSTRUCTOR_RESOURCE_DIR}" ] && ! [ -e "${STUDENT_RESOURCE_DIR}" ]; then
+    mkdir -p "${STUDENT_RESOURCE_DIR}"
+    cp -a "${INSTRUCTOR_RESOURCE_DIR}"/. "${STUDENT_RESOURCE_DIR}"
+  fi
+  # Acknowledge the resource transmission.
+  sudo bash /usr/local/bin/custom_user_resource_ack
+  
+  # Create student's submission directory.
+  [ -e "${STUDENT_SUBMISSION_DIR}" ] || mkdir -p "${STUDENT_SUBMISSION_DIR}"
+  
+  # Clone a locally non-existing git repository, in case STARTUP_GIT_REPOSITORY* parameters are used.
+  if [ -n "${STARTUP_GIT_REPOSITORY+x}" ]; then
+    git clone "${STARTUP_GIT_REPOSITORY}" "/home/jovyan/work/${STARTUP_GIT_REPOSITORY_DIR_NAME}"
+  fi
+  
+  # Clean up irrelevant directories to this role which were created by the default docker image.
+  delete_empty_dir /home/jovyan/__submissions
+fi
+
+sudo rm /etc/sudoers.d/custom_sudo_commands
+
+exec jupyterhub-singleuser "$@"

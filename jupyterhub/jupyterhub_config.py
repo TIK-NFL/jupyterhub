@@ -1,7 +1,10 @@
+import docker
 import os
 import sys
 import logging
+import re
 
+from escapism import unescape
 from ltiauthenticator.lti13.auth import LTI13Authenticator
 from tornado.web import HTTPError
 
@@ -9,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 c = get_config()
+docker_client = docker.from_env()
 
 # ======================================================================================================================
 # General config
@@ -59,9 +63,9 @@ c.DockerSpawner.network_name = os.environ.get('DOCKER_NETWORK_NAME', c.DockerSpa
 
 notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR', '/home/jovyan/work')
 c.DockerSpawner.notebook_dir = notebook_dir
-c.DockerSpawner.volumes = {'jupyterhub-user-{safe_username}': notebook_dir}
+c.DockerSpawner.volumes = {'jupyter_user_{safe_username}': notebook_dir}
 
-c.DockerSpawner.name_template = 'jupyter_{safe_username}'
+c.DockerSpawner.name_template = 'jupyter_user_{safe_username}'
 
 # Remove containers once they are stopped
 c.DockerSpawner.remove = True
@@ -124,6 +128,12 @@ def auth_state_spawner_hook(spawner, auth_state):
     resource_link_data = auth_state['https://purl.imsglobal.org/spec/lti/claim/resource_link']
     custom_data = auth_state.get("https://purl.imsglobal.org/spec/lti/claim/custom", {})
 
+    username = spawner.template_namespace().get('username')
+    client_id = auth_state['aud']
+    platform_id = tool_platform_data['guid']
+    course_id = context_data['id']
+    link_id = resource_link_data['id']
+
     # Determine instructor access
     instructor_access = False
     for role in roles_data_list:
@@ -135,22 +145,49 @@ def auth_state_spawner_hook(spawner, auth_state):
         raise HTTPError(500, reason="LTI object resources are offline. "
                                     "Please contact your instructor or course administrator.")
 
-    # Extra volume per LTI object shared by instructor roles
-    instructor_volume_name = f"jupyterhub-user-lti-instructor-{tool_platform_data['guid']}-{context_data['id']}-{resource_link_data['id']}"
-    spawner.volumes.update({
-        instructor_volume_name: {
-            'bind': '/home/jovyan/instructor_volume',
-            'mode': 'rw' if instructor_access else 'ro'
-        }
-    })
+    if instructor_access:
+        spawner.notebook_dir = '/home/jovyan/'
+        spawner.environment['INSTRUCTOR_ACCESS'] = 'true'
+        spawner.environment['GRANT_SUDO'] = '1'
+        spawner.environment['UID'] = '0'
+        spawner.extra_create_kwargs = {'user': 'root'}
+
+    #
+    # Volumes
+    #
+
+    # Instructor's LTI object volume. Extra volume per LTI object shared by instructor role.
+    inst_volume_name = f"jupyter_lti_object_{client_id}_{course_id}_{link_id}"
+    mode = 'rw' if instructor_access else 'ro'
+    spawner.volumes.update({inst_volume_name: {'bind': '/home/jovyan/__shared', 'mode': mode}})
+
+    # Course-scoped metadata volume
+    spawner.volumes.update({f"jupyter_lti_metadata_{client_id}_{course_id}": {'bind': '/data/metadata', 'mode': 'rw'}})
+
+    stud_submission_volume_partial_name = f"jupyter_lti_stud_submission_{client_id}_{course_id}_"
+
+    if not instructor_access:
+        # Student submission volume for the entire course which student solutions are pushed to by the system.
+        # Readonly to students for solution insights. TODO: switch mode to 'ro'
+        spawner.volumes.update({stud_submission_volume_partial_name + f"{username}": {'bind': '/home/jovyan/work/__submission', 'mode': 'rw'}})
 
     if instructor_access:
-        spawner.environment['INSTRUCTOR_ACCESS'] = 'true'
-        spawner.notebook_dir = '/home/jovyan/instructor_volume'
+        # List submission volumes and corresponding users for this specific course
+        stud_submission_volume_regex = f"{stud_submission_volume_partial_name}(.*)"
+        stud_submission_volumes = list(filter(
+            re.compile(stud_submission_volume_regex).match, [v.name for v in docker_client.volumes.list()]
+        ))
+        stud_submission_users = list()
+        for av in stud_submission_volumes:
+            stud_submission_volume_user = unescape(re.search(stud_submission_volume_regex, av).group(1), '-')
+            stud_submission_users.append(stud_submission_volume_user)
+        # Mount submission volumes for this specific course
+        for u, v in zip(stud_submission_users, stud_submission_volumes):
+            spawner.volumes.update({v: {'bind': f'/home/jovyan/__submissions/{u}', 'mode': 'ro'}})
 
-    resource_name = f"{resource_link_data['title']} (RID-{context_data['id']}-{resource_link_data['id']})"
-    spawner.environment['RESOURCE_NAME'] = resource_name
-    spawner.default_url = f'/lab/tree/{resource_name}'
+    resource_local_path = f"{context_data['title']}/{resource_link_data['title']} (RID-{course_id}-{link_id})"
+    spawner.environment['RESOURCE_LOCAL_PATH'] = resource_local_path
+    spawner.default_url = '' if instructor_access else f'/lab/tree/{resource_local_path}'
 
 
     #
@@ -163,6 +200,9 @@ def auth_state_spawner_hook(spawner, auth_state):
         logger.info('Setting default user server image...')
         spawner.image = os.environ.get('DOCKER_NOTEBOOK_IMAGE', c.DockerSpawner.image)
 
+    #
+    # Git
+    #
     if 'STARTUP_GIT_REPOSITORY' in custom_data:
         logger.info("Setting the startup Git repository to '%s'...", custom_data['STARTUP_GIT_REPOSITORY'])
         spawner.environment['STARTUP_GIT_REPOSITORY'] = custom_data['STARTUP_GIT_REPOSITORY']

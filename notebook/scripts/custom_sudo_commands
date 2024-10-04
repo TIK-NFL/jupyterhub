@@ -1,0 +1,5 @@
+Defaults env_keep += "JUPYTERHUB_USER"
+
+jovyan ALL=(ALL) NOPASSWD: /bin/bash /usr/local/bin/custom_user_resource_ack
+jovyan ALL=(ALL) NOPASSWD: /usr/bin/rm /etc/sudoers.d/custom_sudo_commands
+jovyan ALL=(ALL) NOPASSWD: /usr/bin/rm /etc/sudoers.d/added-by-start-script

@@ -93,10 +93,19 @@ USER 0
 RUN sed -i 's/c.FileContentsManager.delete_to_trash = False/c.FileContentsManager.always_delete_dir = True/g' /etc/jupyter/jupyter_server_config.py
 
 # Custom user server startup
-COPY scripts/custom_user_server_startup.sh /usr/local/bin/custom_user_server_startup
+COPY scripts/custom_user_server_startup /usr/local/bin/custom_user_server_startup
 RUN chmod +x /usr/local/bin/custom_user_server_startup
 
-RUN mkdir -p /home/jovyan/instructor_volume && chown -R jovyan:users /home/jovyan/instructor_volume
+RUN mkdir -p /data/metadata && chown root:root /data/metadata && chmod -R 700 /data/metadata && \
+    mkdir -p /home/jovyan/__shared && chown jovyan:users /home/jovyan/__shared && \
+    mkdir -p /home/jovyan/__submissions && chown jovyan:users /home/jovyan/__submissions && \
+    mkdir -p /home/jovyan/work/__submission && chown jovyan:users /home/jovyan/work/__submission
+
+
+COPY scripts/custom_user_resource_ack /usr/local/bin/custom_user_resource_ack
+RUN chmod +x /usr/local/bin/custom_user_resource_ack
+
+COPY scripts/custom_sudo_commands /etc/sudoers.d/custom_sudo_commands
 
 # Switch to the standard jupyter user 'jovyan'
 USER 1000

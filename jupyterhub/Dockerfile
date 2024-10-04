@@ -13,6 +13,7 @@ ADD "https://api.github.com/repos/TIK-NFL/jupyterhub-ltiauthenticator/commits?pe
 ADD "https://api.github.com/repos/TIK-NFL/jupyterhub-multiauthenticator/commits?per_page=1&sha=lti_support" /tmp/multiauthenticator_latest_commits
 
 RUN python3 -m pip install --no-cache-dir  \
+    docker \
     dockerspawner  \
     jupyterhub-idle-culler \
     git+https://github.com/TIK-NFL/jupyterhub-ltiauthenticator.git@multiauth_support \
