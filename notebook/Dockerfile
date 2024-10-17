@@ -100,8 +100,7 @@ RUN LAB_OVERRIDE_PATH=/opt/conda/share/jupyter/lab/settings/overrides.json && \
 COPY scripts/custom_user_server_startup /usr/local/bin/custom_user_server_startup
 RUN chmod +x /usr/local/bin/custom_user_server_startup
 
-RUN mkdir -p /data/metadata && chown root:root /data/metadata && chmod -R 700 /data/metadata && \
-    mkdir -p /home/jovyan/__shared && chown jovyan:users /home/jovyan/__shared && \
+RUN mkdir -p /home/jovyan/__shared && chown jovyan:users /home/jovyan/__shared && \
     mkdir -p /home/jovyan/__submission && chown jovyan:users /home/jovyan/__submission && \
     mkdir -p /home/jovyan/__submissions && chown jovyan:users /home/jovyan/__submissions
 
