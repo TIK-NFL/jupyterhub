@@ -151,11 +151,14 @@ def auth_state_spawner_hook(spawner, auth_state):
 
     # Determine further LTI parameters
     submission_mode = False
-
     if 'SUBMISSION_MODE' in custom_data and custom_data['SUBMISSION_MODE'].lower() == 'true':
         submission_mode = True
         spawner.environment['SUBMISSION_MODE'] = 'true'
 
+    local_copy = False
+    if 'LOCAL_COPY' in custom_data and custom_data['LOCAL_COPY'].lower() == 'true':
+        local_copy = True
+        spawner.environment['LOCAL_COPY'] = 'true'
 
     #
     # Volumes
@@ -189,7 +192,9 @@ def auth_state_spawner_hook(spawner, auth_state):
 
     resource_local_path = f"{context_data['title']}/{resource_link_data['title']} (RID-{course_id}-{link_id})"
     spawner.environment['RESOURCE_LOCAL_PATH'] = resource_local_path
-    spawner.default_url = '' if instructor_access else f'/lab/tree/work/{resource_local_path}'
+
+    # Default URL to be accessed on startup.
+    spawner.default_url = f'/lab/tree/work/{resource_local_path}' if not instructor_access and local_copy else ''
 
     #
     # Custom selection of the user server image

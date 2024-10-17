@@ -38,7 +38,7 @@ fi
 if [[ "${INSTRUCTOR_ACCESS}" != "true" ]]; then
   
   # Synchronize student's resources with instructor's resources from the read-only volume.
-  if [ -d "${INSTRUCTOR_RESOURCE_DIR}" ] && ! [ -e "${STUDENT_RESOURCE_DIR}" ]; then
+  if [[ "${LOCAL_COPY}" == "true" ]] && [ -d "${INSTRUCTOR_RESOURCE_DIR}" ] && ! [ -e "${STUDENT_RESOURCE_DIR}" ]; then
     mkdir -p "${STUDENT_RESOURCE_DIR}"
     cp -a "${INSTRUCTOR_RESOURCE_DIR}"/. "${STUDENT_RESOURCE_DIR}"
   fi
