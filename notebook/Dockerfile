@@ -98,8 +98,8 @@ RUN chmod +x /usr/local/bin/custom_user_server_startup
 
 RUN mkdir -p /data/metadata && chown root:root /data/metadata && chmod -R 700 /data/metadata && \
     mkdir -p /home/jovyan/__shared && chown jovyan:users /home/jovyan/__shared && \
-    mkdir -p /home/jovyan/__submissions && chown jovyan:users /home/jovyan/__submissions && \
-    mkdir -p /home/jovyan/work/__submission && chown jovyan:users /home/jovyan/work/__submission
+    mkdir -p /home/jovyan/__submission && chown jovyan:users /home/jovyan/__submission && \
+    mkdir -p /home/jovyan/__submissions && chown jovyan:users /home/jovyan/__submissions
 
 
 # Switch to the standard jupyter user 'jovyan'

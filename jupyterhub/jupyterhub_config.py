@@ -61,7 +61,7 @@ c.JupyterHub.db_url = 'postgresql://{}:{}@jupyterhub_db:5432/{}'.format(
 c.DockerSpawner.image = os.environ.get('DOCKER_NOTEBOOK_IMAGE', c.DockerSpawner.image)
 c.DockerSpawner.network_name = os.environ.get('DOCKER_NETWORK_NAME', c.DockerSpawner.network_name)
 
-notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR', '/home/jovyan/work')
+notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR', '/home/jovyan')
 c.DockerSpawner.notebook_dir = notebook_dir
 c.DockerSpawner.volumes = {'jupyter_user_{safe_username}': notebook_dir}
 
@@ -163,7 +163,7 @@ def auth_state_spawner_hook(spawner, auth_state):
     if not instructor_access:
         # Student submission volume for the entire course which student solutions are pushed to by the system.
         # Readonly to students for solution insights. TODO: switch mode to 'ro'
-        spawner.volumes.update({stud_submission_volume_partial_name + f"{username}": {'bind': '/home/jovyan/work/__submission', 'mode': 'rw'}})
+        spawner.volumes.update({stud_submission_volume_partial_name + f"{username}": {'bind': '/home/jovyan/__submission', 'mode': 'rw'}})
 
     if instructor_access:
         # List submission volumes and corresponding users for this specific course
@@ -181,7 +181,7 @@ def auth_state_spawner_hook(spawner, auth_state):
 
     resource_local_path = f"{context_data['title']}/{resource_link_data['title']} (RID-{course_id}-{link_id})"
     spawner.environment['RESOURCE_LOCAL_PATH'] = resource_local_path
-    spawner.default_url = '' if instructor_access else f'/lab/tree/{resource_local_path}'
+    spawner.default_url = '' if instructor_access else f'/lab/tree/work/{resource_local_path}'
 
     #
     # Custom selection of the user server image

@@ -16,7 +16,7 @@ CURRENT_TIMESTAMP="$(date +%s)"
 RESOURCE_LOCAL_PATH="${RESOURCE_LOCAL_PATH:-$CURRENT_TIMESTAMP}"
 INSTRUCTOR_RESOURCE_DIR="/home/jovyan/__shared/${RESOURCE_LOCAL_PATH}"
 STUDENT_RESOURCE_DIR="/home/jovyan/work/${RESOURCE_LOCAL_PATH}"
-STUDENT_SUBMISSION_DIR="/home/jovyan/work/__submission/${RESOURCE_LOCAL_PATH}"
+STUDENT_SUBMISSION_RESOURCE_DIR="/home/jovyan/__submission/${RESOURCE_LOCAL_PATH}"
 
 
 function delete_empty_dir() {
@@ -29,7 +29,7 @@ function delete_empty_dir() {
 if [[ "${INSTRUCTOR_ACCESS}" == "true" ]]; then
   mkdir -p "${INSTRUCTOR_RESOURCE_DIR}"
   # Clean up irrelevant directories to this role which were created by the default docker image.
-  delete_empty_dir /home/jovyan/work/__submission
+  delete_empty_dir /home/jovyan/__submission
 fi 
 
 #
@@ -44,7 +44,7 @@ if [[ "${INSTRUCTOR_ACCESS}" != "true" ]]; then
   fi
   
   # Create student's submission directory.
-  [ -e "${STUDENT_SUBMISSION_DIR}" ] || mkdir -p "${STUDENT_SUBMISSION_DIR}"
+  [ -e "${STUDENT_SUBMISSION_RESOURCE_DIR}" ] || mkdir -p "${STUDENT_SUBMISSION_RESOURCE_DIR}"
   
   # Clone a locally non-existing git repository, in case STARTUP_GIT_REPOSITORY* parameters are used.
   if [ -n "${STARTUP_GIT_REPOSITORY+x}" ]; then
