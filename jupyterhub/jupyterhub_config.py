@@ -149,6 +149,14 @@ def auth_state_spawner_hook(spawner, auth_state):
         spawner.notebook_dir = '/home/jovyan/'
         spawner.environment['INSTRUCTOR_ACCESS'] = 'true'
 
+    # Determine further LTI parameters
+    submission_mode = False
+
+    if 'SUBMISSION_MODE' in custom_data and custom_data['SUBMISSION_MODE'].lower() == 'true':
+        submission_mode = True
+        spawner.environment['SUBMISSION_MODE'] = 'true'
+
+
     #
     # Volumes
     #
@@ -160,12 +168,12 @@ def auth_state_spawner_hook(spawner, auth_state):
 
     stud_submission_volume_partial_name = f"jupyter_lti_stud_submission_{client_id}_{course_id}_"
 
-    if not instructor_access:
+    if submission_mode and not instructor_access:
         # Student submission volume for the entire course which student solutions are pushed to by the system.
         # Readonly to students for solution insights. TODO: switch mode to 'ro'
         spawner.volumes.update({stud_submission_volume_partial_name + f"{username}": {'bind': '/home/jovyan/__submission', 'mode': 'rw'}})
 
-    if instructor_access:
+    if submission_mode and instructor_access:
         # List submission volumes and corresponding users for this specific course
         stud_submission_volume_regex = f"{stud_submission_volume_partial_name}(.*)"
         stud_submission_volumes = list(filter(

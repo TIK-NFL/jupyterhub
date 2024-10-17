@@ -44,7 +44,11 @@ if [[ "${INSTRUCTOR_ACCESS}" != "true" ]]; then
   fi
   
   # Create student's submission directory.
-  [ -e "${STUDENT_SUBMISSION_RESOURCE_DIR}" ] || mkdir -p "${STUDENT_SUBMISSION_RESOURCE_DIR}"
+  if [[ "${SUBMISSION_MODE}" == "true" ]]; then 
+    [ -e "${STUDENT_SUBMISSION_RESOURCE_DIR}" ] || mkdir -p "${STUDENT_SUBMISSION_RESOURCE_DIR}"
+  else
+    delete_empty_dir /home/jovyan/__submission
+  fi
   
   # Clone a locally non-existing git repository, in case STARTUP_GIT_REPOSITORY* parameters are used.
   if [ -n "${STARTUP_GIT_REPOSITORY+x}" ]; then
