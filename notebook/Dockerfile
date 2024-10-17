@@ -92,6 +92,10 @@ USER 0
 # Custom config
 RUN sed -i 's/c.FileContentsManager.delete_to_trash = False/c.FileContentsManager.always_delete_dir = True/g' /etc/jupyter/jupyter_server_config.py
 
+RUN LAB_OVERRIDE_PATH=/opt/conda/share/jupyter/lab/settings/overrides.json && \
+    mkdir -p $(dirname "${LAB_OVERRIDE_PATH}") && \
+    echo '{ "@jupyterlab/filebrowser-extension:browser": { "showFullPath": true }}' > "${LAB_OVERRIDE_PATH}"
+
 # Custom user server startup
 COPY scripts/custom_user_server_startup /usr/local/bin/custom_user_server_startup
 RUN chmod +x /usr/local/bin/custom_user_server_startup
