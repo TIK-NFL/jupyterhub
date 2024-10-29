@@ -7,6 +7,8 @@
 #   RESOURCE_LOCAL_PATH A unique name that identifies the resource transferred to the working directory
 #   STARTUP_GIT_REPOSITORY The Git repository to be cloned on the startup
 #   STARTUP_GIT_REPOSITORY_DIR_NAME The directory name of the Git repository to be cloned
+#   INSTRUCTOR_ACCESS Boolean flag for role-dependent startup actions
+#   SUBMISSION_MODE Prepare subdirectories for the mounted submission volume
 #
 
 # Prevent the user server from starting up with undesired states.
@@ -28,7 +30,11 @@ function delete_empty_dir() {
 #
 if [[ "${INSTRUCTOR_ACCESS}" == "true" ]]; then
   mkdir -p "${INSTRUCTOR_RESOURCE_DIR}"
-  # Clean up irrelevant directories to this role which were created by the default docker image.
+
+  # Clean up irrelevant role-dependent directories which were created by the default docker image.
+  if [[ "${SUBMISSION_MODE}" != "true" ]]; then
+    delete_empty_dir /home/jovyan/__submissions
+  fi
   delete_empty_dir /home/jovyan/__submission
 fi 
 
